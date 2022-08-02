@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <title>User Already Exists</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" >
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="container-collector" id="main">
+    <div class="continer-content" id="content_flex_top_collector">
+    </div>
+
+
+
+
+    <div class="container-content" id="content_flex_center_form">
+
+        <div class="form-group">
+            <p></p>
+            <p>User already exists with this name.</p>
+            <p><a class="btn btn-primary btn-sm col-xs-2 margin-left" th:href="@{/login/reset?user={name}(name=${name})}">Reset Password</a></p>
+            <p><a class="btn btn-danger btn-sm col-xs-2 margin-left" th:href="@{/}">Cancel</a></p>
+        </div>
+
+    </div>
+
+    <div id="btmL">
+    </div>
+    <div id="btmR"></div>
+
+</div>
+</body>
+</html>

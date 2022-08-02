@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title> Home </title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" >
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="container-collector" id="main">
+    <div class="container-content" id="content_flex_top_collector">
+    </div>
+
+
+
+
+    <div class="container-content" id="content_flex_center">
+        <div class="form-group">
+            <h6> RESIDENT MYSTERY </h6>
+            <p>
+                <th:block th:if="${user == 'reset'}">Password reset sent to registered email address.</th:block>
+                <th:block th:if="${user == 'not_found'}">No user found with provided username.</th:block>
+                <th:block th:if="${user == 'created'}">New user created. Welcome!</th:block>
+            </p>
+            <p></p>
+            <p><a class="btn btn-primary btn-sm col-xs-2" th:href="@{/game/start}">Start</a></p>
+            <p><a class="btn btn-primary btn-sm col-xs-2 margin-left" th:href="@{/login/register}">Register</a></p>
+            <p><a class="btn btn-danger btn-sm col-xs-2 margin-left" th:href="@{/login/resetForm}">Reset Password</a></p>
+        </div>
+    </div>
+
+<div id="btmL">
+</div>
+<div id="btmR"></div>
+
+</div>
+</body>
+</html>
