@@ -1,23 +1,17 @@
 package com.suracki.residentmystery.domain;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 @Entity
-@Table(name = "rooms")
-public class Room {
-
+@Table(name = "ExitMappings")
+public class ExitMapping {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
     private Integer id;
 
     private String roomName;
-
-    private String roomDesc;
-
-    private boolean startRoom;
+    private String exitName;
+    private String exitDirection;
 
     public Integer getId() {
         return id;
@@ -35,20 +29,19 @@ public class Room {
         this.roomName = roomName;
     }
 
-    public String getRoomDesc() {
-        return roomDesc;
+    public String getExitName() {
+        return exitName;
     }
 
-    public void setRoomDesc(String roomDesc) {
-        this.roomDesc = roomDesc;
+    public void setExitName(String exitName) {
+        this.exitName = exitName;
     }
 
-    public boolean isStartRoom() {
-        return startRoom;
+    public String getExitDirection() {
+        return exitDirection;
     }
 
-    public void setStartRoom(boolean startRoom) {
-        this.startRoom = startRoom;
+    public void setExitDirection(String exitDirection) {
+        this.exitDirection = exitDirection;
     }
-
 }

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title> Resident Mystery </title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" >
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="container-collector" id="main">
+    <div class="container-content" id="content_flex_top_collector">
+        <div class="col-6">
+
+        </div>
+
+        <div class="col-6 text-right">
+            Logged in user: <b th:inline="text"  class="user"> [[${#httpServletRequest.remoteUser}]] </b>
+            <form th:action="@{/app-logout}" method="POST" name="logoutForm">
+                <input type="submit" value="Logout"/>
+            </form>
+        </div>
+    </div>
+
+
+
+
+    <div class="container-content" id="content_flex_center">
+        <div class="form-group">
+            <h6> <th:block th:text="${roomName}"></th:block></h6>
+            <p>
+                <p><th:block th:text="${roomDesc}"></th:block></p>
+                <p><th:block th:if="${not #lists.isEmpty(interactables)}">
+                    <br>In the room you see:
+                    <th:block th:each="interactable :  ${interactables}">
+                        <a th:href="@{/game/interactWith/?interact={itm}(itm=${interactable.interactableName})}"/>
+                        <br><td th:text="${interactable.interactableName}"></td>
+                        </a>
+                    </th:block>
+                </th:block></p>
+                <p><th:block th:if="${not #lists.isEmpty(loots)}">
+                    <br>You could pick up:
+                    <th:block th:each="loot :  ${loots}">
+                        <a th:href="${'/game/takeLoot/?loot=' + loot.lootName}"/>
+                        <br><td th:text="${loot.lootName}"></td>
+                        </a>
+                    </th:block>
+                </th:block></p>
+                <p><th:block th:if="${not #lists.isEmpty(exits)}">
+                    <br>Exits available:
+                    <th:block th:each="exitName :  ${exits}">
+                        <a th:href="@{/game/useExit/?exit={ext}(ext=${exitName})}"/>
+                        <br>There is a <td th:text="${exitName}"></td> to the <td th:text="${exitDirections[exits.indexOf(exitName)]}"></td>
+                        </a>
+                    </th:block>
+                </th:block></p>
+
+            </p>
+            <p></p>
+            <p><a class="btn btn-primary btn-sm col-xs-2" th:href="@{/game/restart}">Restart Game</a></p>
+        </div>
+    </div>
+
+    <div id="btmL">
+    </div>
+    <div id="btmR"></div>
+
+</div>
+</body>
+</html>
