@@ -4,6 +4,7 @@
     <title> Home </title>
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" >
     <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css}">
 </head>
 <body>
 <div class="container-collector" id="main">
@@ -17,9 +18,21 @@
         <div class="form-group">
             <h6> RESIDENT MYSTERY </h6>
             <p>
-                <th:block th:if="${user == 'reset'}">Password reset sent to registered email address.</th:block>
-                <th:block th:if="${user == 'not_found'}">No user found with provided username.</th:block>
-                <th:block th:if="${user == 'created'}">New user created. Welcome!</th:block>
+            <div class="alert alert-danger" role="alert" th:if="${user == 'generic_error'}">
+                Something went wrong. Please try again.
+            </div>
+            <div class="alert alert-danger" role="alert" th:if="${user == 'error'}">
+                Error occurred with game system. Please try again.
+            </div>
+            <div class="alert alert-success" role="alert" th:if="${user == 'reset'}">
+                Password reset sent to registered email address.
+            </div>
+            <div class="alert alert-success" role="alert" th:if="${user == 'created'}">
+                New user created. Welcome!
+            </div>
+            <div class="alert alert-warning" role="alert" th:if="${user == 'not_found'}">
+                No user found with provided username.
+            </div>
             </p>
             <p></p>
             <p><a class="btn btn-primary btn-sm col-xs-2" th:href="@{/game/start}">Start</a></p>
@@ -28,9 +41,14 @@
         </div>
     </div>
 
-<div id="btmL">
-</div>
-<div id="btmR"></div>
+    <div id="btmL">
+        <h2>Find me on social media</h2>
+        <h3><strong>A new project idea?</strong> Contact me!</h3>
+        <a href="https://twitter.com/Suracki" class="fa fa-twitter"></a>
+        <a href="https://github.com/Suracki" class="fa fa-github"></a>
+        <a href="https://www.linkedin.com/in/simon-linford/" class="fa fa-linkedin"></a>
+    </div>
+    <div id="btmR"></div>
 
 </div>
 </body>

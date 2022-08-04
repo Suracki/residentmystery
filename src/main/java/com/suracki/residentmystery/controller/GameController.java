@@ -47,4 +47,12 @@ public class GameController {
         return gameService.exit(model, exitKey);
     }
 
+    @GetMapping("/game/restart")
+    public String restart(Model model)
+    {
+        logger.info("User connected to /game/restart endpoint");
+        return gameService.restart(model);
+    }
+
+
 }
