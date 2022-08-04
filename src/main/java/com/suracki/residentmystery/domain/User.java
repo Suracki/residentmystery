@@ -3,6 +3,7 @@ package com.suracki.residentmystery.domain;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -21,10 +22,6 @@ public class User {
             message="Email is required for account recovery.")
     private String email;
     private String role = "user";
-
-    //Variables for gameplay
-    private String currentRoom;
-    private String[] currentLoot = new String[]{};
 
     public String getEmail() {
         return email;
@@ -64,21 +61,5 @@ public class User {
 
     public void setRole(String role) {
         this.role = role;
-    }
-
-    public String getCurrentRoom() {
-        return currentRoom;
-    }
-
-    public void setCurrentRoom(String currentRoom) {
-        this.currentRoom = currentRoom;
-    }
-
-    public String[] getCurrentLoot() {
-        return currentLoot;
-    }
-
-    public void setCurrentLoot(String[] currentLoot) {
-        this.currentLoot = currentLoot;
     }
 }
