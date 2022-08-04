@@ -29,7 +29,9 @@
             <h6> You examine the <th:block th:text="${lootName}"></th:block></h6>
             <p>
             <p><th:block th:text="${lootDescription}"></th:block></p>
-            <p> You pick it up and add it to your inventory</p>
+            <div class="alert alert-success" role="alert">
+                You pick it up and add it to your inventory.
+            </div>
             </p>
             <p>
                 <a th:href="@{/game/start/}"/>
