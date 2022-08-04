@@ -149,7 +149,8 @@ public class GameService {
         if (user == null) {
             //error loading user
             logger.error("No user found in database with name: " + name);
-            return "";
+            model.addAttribute("user","error");
+            return "index";
         }
 
         if (gameStates.get(user.getUsername())!=null) {
@@ -226,6 +227,31 @@ public class GameService {
         return "game/room";
     }
 
+    public String restart(Model model) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String name = auth.getName();
+
+        logger.info("GameService 'restart' called for user " + name);
+
+        User user = userRepository.findByUsername(name);
+        if (user == null) {
+            //error loading user
+            logger.error("No user found in database with name: " + name);
+            model.addAttribute("user","error");
+            return "index";
+        }
+
+        if (gameStates.get(user.getUsername())==null) {
+            //User is not already in a game, no need to reset
+            logger.info("No GameState found for User; User has not yet started the game. Starting new game...");
+            return start(model);
+        }
+
+        gameStates.remove(user.getUsername());
+        logger.info("GameState cleared for user " + name + ". Starting new game...");
+        return start(model);
+    }
+
     public String continueGame(Model model) {
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -236,7 +262,8 @@ public class GameService {
 
         if (user == null) {
             logger.error("No user found in database with name: " + name);
-            return "";
+            model.addAttribute("user","error");
+            return "index";
         }
 
         GameState gameState = gameStates.get(user.getUsername());
@@ -311,7 +338,8 @@ public class GameService {
 
         if (user == null) {
             logger.error("No user found in database with name: " + name);
-            return "";
+            model.addAttribute("user","error");
+            return "index";
         }
 
         GameState gameState = gameStates.get(user.getUsername());
@@ -382,7 +410,8 @@ public class GameService {
 
         if (user == null) {
             logger.error("No user found in database with name: " + name);
-            return "";
+            model.addAttribute("user","error");
+            return "index";
         }
 
         GameState gameState = gameStates.get(user.getUsername());
@@ -417,7 +446,8 @@ public class GameService {
 
         if (user == null) {
             logger.error("No user found in database with name: " + name);
-            return "";
+            model.addAttribute("user","error");
+            return "index";
         }
 
         GameState gameState = gameStates.get(user.getUsername());
@@ -473,7 +503,8 @@ public class GameService {
         List<String> exitDirections = new ArrayList<>();
         if (exitMappings == null || exitMappings.size()==0) {
             logger.error("No exit mappings found for room");
-            return "";
+            model.addAttribute("user","error");
+            return "index";
 
         }
         else {
@@ -494,7 +525,8 @@ public class GameService {
 
         if (roomName.equals("")) {
             logger.error("Unable to find matching mapping for this exit.");
-            return "";
+            model.addAttribute("user","error");
+            return "index";
         }
 
         gameState.setCurrentRoom(roomName);
