@@ -30,9 +30,13 @@
             <p>
             <p><th:block th:text="${interactableDesc}"></th:block></p>
 
-            <th:block th:if="${lockstate == 'nokey'}"><p>It appears you do not have the required item to solve this currently.</p></th:block>
+            <div class="alert alert-warning" role="alert" th:if="${lockstate == 'nokey'}">
+                It appears you do not have the required item to solve this currently.
+            </div>
             <th:block th:if="${lockstate == 'notlocked'}"><p><th:block th:text="${interactableAlreadySolvedText}"></th:block></p></th:block>
-            <th:block th:if="${lockstate == 'unlocking'}"><p><th:block th:text="${interactableSolvedText}"></th:block></p></th:block>
+            <div class="alert alert-success" role="alert" th:if="${lockstate == 'unlocking'}">
+                <th:block th:text="${interactableSolvedText}"></th:block>
+            </div>
             </p>
             <p>
                 <a th:href="@{/game/start/}"/>
