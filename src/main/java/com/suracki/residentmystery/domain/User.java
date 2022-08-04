@@ -22,6 +22,10 @@ public class User {
     private String email;
     private String role = "user";
 
+    //Variables for gameplay
+    private String currentRoom;
+    private String[] currentLoot = new String[]{};
+
     public String getEmail() {
         return email;
     }
@@ -60,5 +64,21 @@ public class User {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public String getCurrentRoom() {
+        return currentRoom;
+    }
+
+    public void setCurrentRoom(String currentRoom) {
+        this.currentRoom = currentRoom;
+    }
+
+    public String[] getCurrentLoot() {
+        return currentLoot;
+    }
+
+    public void setCurrentLoot(String[] currentLoot) {
+        this.currentLoot = currentLoot;
     }
 }

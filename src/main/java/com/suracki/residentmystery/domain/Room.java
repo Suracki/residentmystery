@@ -15,10 +15,11 @@ public class Room {
 
     private String roomDesc;
 
-    private Interactable[] interactables;
+    private String[] interactables;
 
-    private Loot[] loots;
+    private String[] loots;
 
+    @ElementCollection
     private Map<String, String> exits;
 
     private boolean startRoom;
@@ -47,19 +48,19 @@ public class Room {
         this.roomDesc = roomDesc;
     }
 
-    public Interactable[] getInteractables() {
+    public String[] getInteractables() {
         return interactables;
     }
 
-    public void setInteractables(Interactable[] interactables) {
+    public void setInteractables(String[] interactables) {
         this.interactables = interactables;
     }
 
-    public Loot[] getLoots() {
+    public String[] getLoots() {
         return loots;
     }
 
-    public void setLoots(Loot[] loots) {
+    public void setLoots(String[] loots) {
         this.loots = loots;
     }
 

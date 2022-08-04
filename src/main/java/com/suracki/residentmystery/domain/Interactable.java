@@ -16,7 +16,7 @@ public class Interactable {
 
     private String solvedText;
 
-    private Loot[] contents;
+    private String[] contents;
 
     private boolean used;
 
@@ -56,11 +56,11 @@ public class Interactable {
         this.solvedText = solvedText;
     }
 
-    public Loot[] getContents() {
+    public String[] getContents() {
         return contents;
     }
 
-    public void setContents(Loot[] contents) {
+    public void setContents(String[] contents) {
         this.contents = contents;
     }
 
