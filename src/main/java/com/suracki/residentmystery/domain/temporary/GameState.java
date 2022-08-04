@@ -3,12 +3,10 @@ package com.suracki.residentmystery.domain.temporary;
 import com.suracki.residentmystery.domain.Interactable;
 import com.suracki.residentmystery.domain.Loot;
 import com.suracki.residentmystery.domain.Room;
-import com.suracki.residentmystery.service.GameService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class GameState {
 
@@ -98,5 +96,18 @@ public class GameState {
 
     public void addLoot(String loot) {
         currentLoot.add(loot);
+    }
+
+    public boolean hasLoot(String lootName) {
+        for (String loot : currentLoot) {
+            if (loot.equals(lootName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void removeLoot(String lootName) {
+        currentLoot.remove(lootName);
     }
 }

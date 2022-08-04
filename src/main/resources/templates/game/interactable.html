@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title> Resident Mystery </title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" >
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="container-collector" id="main">
+    <div class="container-content" id="content_flex_top_collector">
+        <div class="col-6">
+
+        </div>
+
+        <div class="col-6 text-right">
+            Logged in user: <b th:inline="text"  class="user"> [[${#httpServletRequest.remoteUser}]] </b>
+            <form th:action="@{/app-logout}" method="POST" name="logoutForm">
+                <input type="submit" value="Logout"/>
+            </form>
+        </div>
+    </div>
+
+
+
+
+    <div class="container-content" id="content_flex_center">
+        <div class="form-group">
+            <h6> You examine the <th:block th:text="${interactableName}"></th:block></h6>
+            <p>
+            <p><th:block th:text="${interactableDesc}"></th:block></p>
+
+            <th:block th:if="${lockstate == 'nokey'}"><p>It appears you do not have the required item to solve this currently.</p></th:block>
+            <th:block th:if="${lockstate == 'notlocked'}"><p><th:block th:text="${interactableAlreadySolvedText}"></th:block></p></th:block>
+            <th:block th:if="${lockstate == 'unlocking'}"><p><th:block th:text="${interactableSolvedText}"></th:block></p></th:block>
+            </p>
+            <p>
+                <a th:href="@{/game/start/}"/>
+                Return to <td th:text="${roomName}"></td>
+            </a>
+            </p>
+            <p><a class="btn btn-primary btn-sm col-xs-2" th:href="@{/game/restart}">Restart Game</a></p>
+        </div>
+    </div>
+
+    <div id="btmL">
+    </div>
+    <div id="btmR"></div>
+
+</div>
+</body>
+</html>

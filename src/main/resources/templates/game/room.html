@@ -8,6 +8,16 @@
 <body>
 <div class="container-collector" id="main">
     <div class="container-content" id="content_flex_top_collector">
+        <div class="col-6">
+
+        </div>
+
+        <div class="col-6 text-right">
+            Logged in user: <b th:inline="text"  class="user"> [[${#httpServletRequest.remoteUser}]] </b>
+            <form th:action="@{/app-logout}" method="POST" name="logoutForm">
+                <input type="submit" value="Logout"/>
+            </form>
+        </div>
     </div>
 
 
@@ -19,26 +29,26 @@
             <p>
                 <p><th:block th:text="${roomDesc}"></th:block></p>
                 <p><th:block th:if="${not #lists.isEmpty(interactables)}">
-                    In the room you see:
+                    <br>In the room you see:
                     <th:block th:each="interactable :  ${interactables}">
-                        <a th:href="@{/game/interactWith/?interact={itm}(itm=${interactable})}"/>
-                        <td th:text="${interactable}"></td>
+                        <a th:href="@{/game/interactWith/?interact={itm}(itm=${interactable.interactableName})}"/>
+                        <br><td th:text="${interactable.interactableName}"></td>
                         </a>
                     </th:block>
                 </th:block></p>
                 <p><th:block th:if="${not #lists.isEmpty(loots)}">
-                    You could pick up:
+                    <br>You could pick up:
                     <th:block th:each="loot :  ${loots}">
-                        <a th:href="${'/game/takeLoot/?loot=' + loot}"/>
-                        <td th:text="${loot}"></td>
+                        <a th:href="${'/game/takeLoot/?loot=' + loot.lootName}"/>
+                        <br><td th:text="${loot.lootName}"></td>
                         </a>
                     </th:block>
                 </th:block></p>
-                <p><th:block th:if="${not #maps.isEmpty(exits)}">
-                    Exits available:
-                    <th:block th:each="entry :  ${exits}">
-                        <a th:href="@{/game/useExit/?exit={ext}(ext=${entry.key})}"/>
-                        There is a <td th:text="${entry.key}"></td> to the <td th:text="${entry.value}"></td>
+                <p><th:block th:if="${not #lists.isEmpty(exits)}">
+                    <br>Exits available:
+                    <th:block th:each="exitName :  ${exits}">
+                        <a th:href="@{/game/useExit/?exit={ext}(ext=${exitName})}"/>
+                        <br>There is a <td th:text="${exitName}"></td> to the <td th:text="${exitDirections[exits.indexOf(exitName)]}"></td>
                         </a>
                     </th:block>
                 </th:block></p>

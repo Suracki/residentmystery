@@ -16,6 +16,8 @@ public class Interactable {
 
     private String solvedText;
 
+    private String alreadySolvedText;
+
     private String[] contents;
 
     private boolean used;
@@ -24,12 +26,32 @@ public class Interactable {
 
     private String keyName;
 
+    private String roomName;
+
+    private String target;
+
     public Integer getId() {
         return id;
     }
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public String getTarget() {
+        return target;
+    }
+
+    public void setTarget(String target) {
+        this.target = target;
+    }
+
+    public String getRoomName() {
+        return roomName;
+    }
+
+    public void setRoomName(String roomName) {
+        this.roomName = roomName;
     }
 
     public String getInteractableName() {
@@ -86,5 +108,13 @@ public class Interactable {
 
     public void setKeyName(String keyName) {
         this.keyName = keyName;
+    }
+
+    public String getAlreadySolvedText() {
+        return alreadySolvedText;
+    }
+
+    public void setAlreadySolvedText(String alreadySolvedText) {
+        this.alreadySolvedText = alreadySolvedText;
     }
 }
