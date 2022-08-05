@@ -57,6 +57,7 @@
             </p>
             <p></p>
             <p><a class="btn btn-primary btn-sm col-xs-2" th:href="@{/game/restart}">Restart Game</a></p>
+            <p><th:block th:if="${admin != null}"><a class="btn btn-primary btn-sm col-xs-2" th:href="@{/admin/landing}">Admin Page</a></th:block></p>
         </div>
     </div>
 

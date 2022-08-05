@@ -3,8 +3,10 @@ package com.suracki.residentmystery.service;
 import com.suracki.residentmystery.domain.*;
 import com.suracki.residentmystery.domain.temporary.GameState;
 import com.suracki.residentmystery.repository.*;
+import com.suracki.residentmystery.security.RoleCheck;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -22,18 +24,21 @@ public class GameService {
     ExitMappingRepository exitMappingRepository;
     static Map<String, GameState> gameStates;
 
+    private RoleCheck roleCheck;
+
     private static int concurrentPlayerCacheSize = 1000;
 
     private static final Logger logger = LogManager.getLogger(GameService.class);
 
     public GameService(UserRepository userRepository, RoomRepository roomRepository,
                        InteractableRepository interactableRepository, LootRepository lootRepository,
-                       ExitMappingRepository exitMappingRepository) {
+                       ExitMappingRepository exitMappingRepository, RoleCheck roleCheck) {
         this.userRepository = userRepository;
         this.roomRepository = roomRepository;
         this.interactableRepository = interactableRepository;
         this.lootRepository = lootRepository;
         this.exitMappingRepository = exitMappingRepository;
+        this.roleCheck = roleCheck;
         gameStates = new LinkedHashMap<>() {
             @Override
             protected boolean removeEldestEntry(final Map.Entry eldest) {
@@ -153,11 +158,15 @@ public class GameService {
             return "index";
         }
 
+        roleCheck(model);
+
         if (gameStates.get(user.getUsername())!=null) {
             //User is already mid-game
             logger.info("GameState found for User; User is mid-game in room " + gameStates.get(user.getUsername()).getCurrentRoom() + ", continuing...");
             return continueGame(model);
         }
+
+
 
         GameState gameState = new GameState();
         gameState.setRooms(roomRepository.findAll());
@@ -265,6 +274,8 @@ public class GameService {
             model.addAttribute("user","error");
             return "index";
         }
+
+        roleCheck(model);
 
         GameState gameState = gameStates.get(user.getUsername());
         if (gameStates.get(user.getUsername())==null) {
@@ -531,6 +542,13 @@ public class GameService {
 
         gameState.setCurrentRoom(roomName);
         return continueGame(model);
+    }
+
+    private void roleCheck(Model model) {
+        if (roleCheck.RoleCheck("Admin")) {
+            logger.info("User is an ADMIN");
+            model.addAttribute("admin", "true");
+        }
     }
 
 
