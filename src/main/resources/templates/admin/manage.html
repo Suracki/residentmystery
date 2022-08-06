@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title> Resident Mystery </title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" >
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css}">
+</head>
+<body>
+<div class="container-collector" id="main">
+    <div class="container-content" id="content_flex_top_collector">
+        <div class="col-6">
+            <a href="/admin/manage" class="btn btn-primary btn-sm">All</a>
+            <a href="/admin/filter?type=room" class="btn btn-primary btn-sm">Rooms</a>
+            <a href="/admin/filter?type=interactable" class="btn btn-primary btn-sm">Interactables</a>
+            <a href="/admin/filter?type=loot" class="btn btn-primary btn-sm">Loot</a>
+            <a href="/admin/filter?type=exitMapping" class="btn btn-primary btn-sm">Exits</a>
+        </div>
+
+        <div class="col-6 text-right">
+            Logged in user: <b th:inline="text"  class="user"> [[${#httpServletRequest.remoteUser}]] </b>
+            <form th:action="@{/app-logout}" method="POST" name="logoutForm">
+                <input type="submit" value="Logout"/>
+            </form>
+        </div>
+    </div>
+
+    <div class="container-content" id="content_flex_center_form">
+
+        <div class="row">
+            <th:block th:if="${type == 'all' or type == 'room'}">
+                <h6>Rooms</h6>
+                <div class="form-group">
+                <a href="/admin/addRoom" class="btn btn-primary btn-sm">Add New</a>
+                <a href="/admin/filter?type=room" class="btn btn-primary btn-sm">Filter</a>
+                </div>
+                <table class="table table-bordered">
+                    <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Name</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="room : ${rooms}">
+                        <td style="width: 10%" th:text="${room.id}"></td>
+                        <td th:text="${room.roomName}"></td>
+                        <td style="width: 15%" class="text-center">
+                            <a th:href="@{/admin/updateRoom/{id}(id=${room.id})}">Edit</a>&nbsp;|&nbsp;
+                            <a th:href="@{/admin/deleteRoom/{id}(id=${room.id})}">Delete</a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </th:block>
+            <th:block th:if="${type == 'all' or type == 'interactable'}">
+                <h6>Interactables</h6>
+                <div class="form-group">
+                <a href="/admin/addInter" class="btn btn-primary btn-sm">Add New</a>
+                <a href="/admin/filter?type=interactable" class="btn btn-primary btn-sm">Filter</a>
+                </div>
+                <table class="table table-bordered">
+                    <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Name</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="interactable : ${interactables}">
+                        <td style="width: 10%" th:text="${interactable.id}"></td>
+                        <td th:text="${interactable.interactableName}"></td>
+                        <td style="width: 15%" class="text-center">
+                            <a th:href="@{/admin/updateInter/{id}(id=${interactable.id})}">Edit</a>&nbsp;|&nbsp;
+                            <a th:href="@{/admin/deleteInter/{id}(id=${interactable.id})}">Delete</a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </th:block>
+            <th:block th:if="${type == 'all' or type == 'loot'}">
+                <h6>Loots</h6>
+                <div class="form-group">
+                <a href="/admin/addLoot" class="btn btn-primary btn-sm">Add New</a>
+                <a href="/admin/filter?type=loot" class="btn btn-primary btn-sm">Filter</a>
+                </div>
+                <table class="table table-bordered">
+                    <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Name</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="loot : ${loots}">
+                        <td style="width: 10%" th:text="${loot.id}"></td>
+                        <td th:text="${loot.lootName}"></td>
+                        <td style="width: 15%" class="text-center">
+                            <a th:href="@{/admin/updateLoot/{id}(id=${loot.id})}">Edit</a>&nbsp;|&nbsp;
+                            <a th:href="@{/admin/deleteLoot/{id}(id=${loot.id})}">Delete</a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </th:block>
+            <th:block th:if="${type == 'all' or type == 'exitMapping'}">
+                <h6>Exit Mappings</h6>
+                <div class="form-group">
+                <a href="/admin/addExit" class="btn btn-primary btn-sm">Add New</a>
+                <a href="/admin/filter?type=exitMapping" class="btn btn-primary btn-sm">Filter</a>
+                </div>
+                <table class="table table-bordered">
+                    <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Exit Name</th>
+                        <th>Room Name</th>
+                        <th>Direction</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="exitMapping : ${exitMappings}">
+                        <td style="width: 10%" th:text="${exitMapping.id}"></td>
+                        <td th:text="${exitMapping.exitName}"></td>
+                        <td th:text="${exitMapping.roomName}"></td>
+                        <td th:text="${exitMapping.exitDirection}"></td>
+                        <td style="width: 15%" class="text-center">
+                            <a th:href="@{/admin/updateExit/{id}(id=${exitMapping.id})}">Edit</a>&nbsp;|&nbsp;
+                            <a th:href="@{/admin/deleteExit/{id}(id=${exitMapping.id})}">Delete</a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </th:block>
+        </div>
+    </div>
+
+
+
+    <div id="btmL">
+        <h2>Find me on social media</h2>
+        <h3><strong>A new project idea?</strong> Contact me!</h3>
+        <a href="https://twitter.com/Suracki" class="fa fa-twitter"></a>
+        <a href="https://github.com/Suracki" class="fa fa-github"></a>
+        <a href="https://www.linkedin.com/in/simon-linford/" class="fa fa-linkedin"></a>
+    </div>
+    <div id="btmR"></div>
+
+</div>
+</body>
+</html>

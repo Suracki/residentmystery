@@ -14,7 +14,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 @Service
@@ -42,6 +45,18 @@ public class AdminService {
         logger.info("AdminService created");
 
 
+    }
+
+    public String manage(Model model, String type) {
+        logger.info("AdminService 'manage' called.");
+
+        model.addAttribute("type", type);
+        model.addAttribute("rooms", roomRepository.findAll());
+        model.addAttribute("interactables", interactableRepository.findAll());
+        model.addAttribute("loots", lootRepository.findAll());
+        model.addAttribute("exitMappings", exitMappingRepository.findAll());
+
+        return "admin/manage";
     }
 
     public String exportData(Model model) {
@@ -117,6 +132,47 @@ public class AdminService {
             model.addAttribute("imported", "gson_fail");
             return "/admin/landing";
         }
+    }
+
+    public String addRoom(Model model, Room room) {
+        logger.info("AdminService 'addRoom' called.");
+        return "admin/gui/addRoom";
+    }
+
+    public String validateRoom(Model model, BindingResult result, Room room) {
+        logger.info("AdminService 'validateRoom' called.");
+        if (!result.hasErrors()) {
+            roomRepository.save(room);
+            return manage(model, "room");
+        }
+        return "admin/gui/addRoom";
+    }
+
+    public String deleteRoom(Integer id, Model model) {
+        roomRepository.deleteById(id);
+        return manage(model, "room");
+    }
+
+    public String updateRoom(int id, Model model) {
+        try {
+            Room room = roomRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid id:" + id));
+            model.addAttribute("room", room);
+            return "admin/gui/editRoom";
+        }
+        catch (IllegalArgumentException e) {
+            model.addAttribute("edit","id_not_found");
+            return "/admin/landing";
+        }
+
+    }
+
+    public String updateRoom(int id, Room room, BindingResult result, Model model) {
+        if (result.hasErrors()) {
+            return "admin/gui/editRoom";
+        }
+        room.setId(id);
+        roomRepository.save(room);
+        return manage(model, "room");
     }
 
 }
