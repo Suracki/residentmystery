@@ -10,7 +10,8 @@
 <div class="container-collector" id="main">
     <div class="container-content" id="content_flex_top_collector">
         <div class="col-6">
-
+            <p><a class="btn btn-primary btn-sm col-xs-2" th:href="@{/game/restart}">Restart Game</a></p>
+            <p><th:block th:if="${admin != null}"><a class="btn btn-primary btn-sm col-xs-2" th:href="@{/admin/landing}">Admin Page</a></th:block></p>
         </div>
 
         <div class="col-6 text-right">
@@ -43,7 +44,6 @@
                 Return to <td th:text="${roomName}"></td>
             </a>
             </p>
-            <p><a class="btn btn-primary btn-sm col-xs-2" th:href="@{/game/restart}">Restart Game</a></p>
         </div>
     </div>
 
