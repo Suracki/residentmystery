@@ -66,6 +66,14 @@ public class GameService {
         ring.setLootDesc("A gold ring, with something indecipherable engraved around the band.");
         ring.setRoomName("Dining Room");
         lootRepository.save(ring);
+        Loot goldKey = new Loot();
+        goldKey.setLootName("Gold Key");
+        goldKey.setLootDesc("An old key made from gold.");
+        lootRepository.save(goldKey);
+        Loot medal = new Loot();
+        medal.setLootName("Medal");
+        medal.setLootDesc("A gold medal, with 'you win!' engraved on it.");
+        lootRepository.save(medal);
 
         //set up interactables:
         Interactable redDoor = new Interactable();
@@ -97,7 +105,19 @@ public class GameService {
         statue.setAlreadySolvedText("You have already placed the Ring on the statue's finger. There is nothing else to do here.");
         statue.setRoomName("Entrance Hall");
         statue.setTarget("Main Door");
+        statue.setContents("Gold Key");
         interactableRepository.save(statue);
+        Interactable chest = new Interactable();
+        chest.setInteractableName("Chest");
+        chest.setInteractableDesc("A large wooden chest");
+        chest.setLocked(true);
+        chest.setKeyName("Red Key");
+        chest.setSolvedText("Your key fits the lock without any trouble, and you unlock the chest.");
+        chest.setAlreadySolvedText("The unlocked chest is empty.");
+        chest.setRoomName("Outside");
+        chest.setContents("Medal");
+        chest.setTarget("");
+        interactableRepository.save(chest);
 
         //set up exit mappings
 
@@ -331,6 +351,7 @@ public class GameService {
         model.addAttribute("roomDesc", room.getRoomDesc());
         model.addAttribute("interactables", interactableRepository.findByRoomname(room.getRoomName()));
         model.addAttribute("loots", loots);
+        model.addAttribute("inventory", inventory);
 
         logger.info("GameState found for user " + name + ", continuning game from room " + room.getRoomName() + ".");
         logger.info("Room contains " + interactableRepository.findByRoomname(room.getRoomName()).size() + " interactables, "
@@ -380,6 +401,13 @@ public class GameService {
                         }
                     }
 
+                }
+
+                if (!interactable.getContents().equals("")) {
+                    logger.info("Solved interactable contains loot! Redirecting to loot method.");
+                    model.addAttribute("interactableName", interactable.getInteractableName());
+                    model.addAttribute("interactableSolvedText", interactable.getSolvedText());
+                    return loot(model, interactable.getContents());
                 }
             }
             else {
@@ -445,6 +473,39 @@ public class GameService {
         model.addAttribute("roomName", room.getRoomName());
 
         return "game/loot";
+
+    }
+
+    public String examine(Model model, String lootName) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String name = auth.getName();
+        User user = userRepository.findByUsername(name);
+
+        logger.info("GameService 'examine' called for user " + name + ", object " + lootName);
+
+        if (user == null) {
+            logger.error("No user found in database with name: " + name);
+            model.addAttribute("user","error");
+            return "index";
+        }
+
+        GameState gameState = gameStates.get(user.getUsername());
+        if (gameStates.get(user.getUsername())==null) {
+            //No GameState found for user. Need to restart the game.
+            logger.error("No gamestate found for name: " + name + ", restarting and creating new session.");
+            return start(model);
+        }
+        gameState.logState();
+
+        Loot loot = gameState.findLoot(lootName);
+        Room room = gameState.findRoom(gameState.getCurrentRoom());
+
+        model.addAttribute("lootName", loot.getLootName());
+        model.addAttribute("lootDescription", loot.getLootDesc());
+
+        model.addAttribute("roomName", room.getRoomName());
+
+        return "game/examine";
 
     }
 

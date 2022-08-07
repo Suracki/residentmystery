@@ -1,6 +1,7 @@
 package com.suracki.residentmystery.domain;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
 
 @Entity
 @Table(name = "ExitMappings")
@@ -9,8 +10,11 @@ public class ExitMapping {
     @GeneratedValue(strategy= GenerationType.AUTO)
     private Integer id;
 
+    @NotEmpty(message = "Enter name of source room.")
     private String roomName;
+    @NotEmpty(message = "Enter name of exit interactable.")
     private String exitName;
+    @NotEmpty(message = "Enter direction of exit (eg north, west, up, down, etc).")
     private String exitDirection;
 
     public Integer getId() {

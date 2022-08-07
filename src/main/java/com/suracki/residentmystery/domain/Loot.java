@@ -1,6 +1,7 @@
 package com.suracki.residentmystery.domain;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
 
 @Entity
 @Table(name = "loots")
@@ -10,8 +11,10 @@ public class Loot {
     @GeneratedValue(strategy= GenerationType.AUTO)
     private Integer id;
 
+    @NotEmpty(message = "Loot Name is mandatory.")
     private String lootName;
 
+    @NotEmpty(message = "Loot Description is mandatory.")
     private String lootDesc;
 
     private String roomName;

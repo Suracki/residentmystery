@@ -42,6 +42,13 @@ public class GameController {
         return gameService.loot(model, lootName);
     }
 
+    @GetMapping("/game/examine")
+    public String examine(@RequestParam(value="loot") String lootName, Model model)
+    {
+        logger.info("User connected to /game/examine/ endpoint");
+        return gameService.examine(model, lootName);
+    }
+
     @GetMapping("/game/useExit")
     public String exit(@RequestParam(value="exit") String exitKey, Model model)
     {
