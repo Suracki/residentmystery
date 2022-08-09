@@ -175,4 +175,127 @@ public class AdminService {
         return manage(model, "room");
     }
 
+    public String addLoot(Model model, Loot loot) {
+        logger.info("AdminService 'addRoom' called.");
+        return "admin/gui/addLoot";
+    }
+
+    public String validateLoot(Model model, BindingResult result, Loot loot) {
+        logger.info("AdminService 'validateRoom' called.");
+        if (!result.hasErrors()) {
+            lootRepository.save(loot);
+            return manage(model, "loot");
+        }
+        return "admin/gui/addLoot";
+    }
+
+    public String deleteLoot(Integer id, Model model) {
+        lootRepository.deleteById(id);
+        return manage(model, "loot");
+    }
+
+    public String updateLoot(int id, Model model) {
+        try {
+            Loot loot = lootRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid id:" + id));
+            model.addAttribute("loot", loot);
+            return "admin/gui/editLoot";
+        }
+        catch (IllegalArgumentException e) {
+            model.addAttribute("edit","id_not_found");
+            return "/admin/landing";
+        }
+
+    }
+
+    public String updateLoot(int id, Loot loot, BindingResult result, Model model) {
+        if (result.hasErrors()) {
+            return "admin/gui/editLoot";
+        }
+        loot.setId(id);
+        lootRepository.save(loot);
+        return manage(model, "loot");
+    }
+
+    public String addInter(Model model, Interactable interactable) {
+        logger.info("AdminService 'addInter' called.");
+        return "admin/gui/addInter";
+    }
+
+    public String validateInter(Model model, BindingResult result, Interactable interactable) {
+        logger.info("AdminService 'validateInter' called.");
+        if (!result.hasErrors()) {
+            interactableRepository.save(interactable);
+            return manage(model, "interactable");
+        }
+        return "admin/gui/addInter";
+    }
+
+    public String deleteInter(Integer id, Model model) {
+        interactableRepository.deleteById(id);
+        return manage(model, "interactable");
+    }
+
+    public String updateInter(int id, Model model) {
+        try {
+            Interactable interactable = interactableRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid id:" + id));
+            model.addAttribute("interactable", interactable);
+            return "admin/gui/editInter";
+        }
+        catch (IllegalArgumentException e) {
+            model.addAttribute("edit","id_not_found");
+            return "/admin/landing";
+        }
+
+    }
+
+    public String updateInter(int id, Interactable interactable, BindingResult result, Model model) {
+        if (result.hasErrors()) {
+            return "admin/gui/editRoom";
+        }
+        interactable.setId(id);
+        interactableRepository.save(interactable);
+        return manage(model, "interactable");
+    }
+
+
+    public String addExit(Model model, ExitMapping exitMapping) {
+        logger.info("AdminService 'addExit' called.");
+        return "admin/gui/addExitMap";
+    }
+
+    public String validateExit(Model model, BindingResult result, ExitMapping exitMapping) {
+        logger.info("AdminService 'validateExit' called.");
+        if (!result.hasErrors()) {
+            exitMappingRepository.save(exitMapping);
+            return manage(model, "exitMapping");
+        }
+        return "admin/gui/addExitMap";
+    }
+
+    public String deleteExit(Integer id, Model model) {
+        exitMappingRepository.deleteById(id);
+        return manage(model, "exitMapping");
+    }
+
+    public String updateExit(int id, Model model) {
+        try {
+            ExitMapping exitMapping = exitMappingRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid id:" + id));
+            model.addAttribute("exitMapping", exitMapping);
+            return "admin/gui/editExitMap";
+        }
+        catch (IllegalArgumentException e) {
+            model.addAttribute("edit","id_not_found");
+            return "/admin/landing";
+        }
+
+    }
+
+    public String updateExit(int id, ExitMapping exitMapping, BindingResult result, Model model) {
+        if (result.hasErrors()) {
+            return "admin/gui/editExit";
+        }
+        exitMapping.setId(id);
+        exitMappingRepository.save(exitMapping);
+        return manage(model, "exitMapping");
+    }
 }

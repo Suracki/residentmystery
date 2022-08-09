@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title> Resident Mystery </title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" >
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css}">
+</head>
+<body>
+<div class="container-collector" id="main">
+    <div class="container-content" id="content_flex_top_collector">
+        <div class="col-6">
+
+        </div>
+
+        <div class="col-6 text-right">
+            Logged in user: <b th:inline="text"  class="user"> [[${#httpServletRequest.remoteUser}]] </b>
+            <form th:action="@{/app-logout}" method="POST" name="logoutForm">
+                <input type="submit" value="Logout"/>
+            </form>
+        </div>
+    </div>
+
+
+
+
+    <div class="container-content" id="content_flex_center">
+        <form action="#" th:action="@{/admin/updateExit/{id}(id=${exitMapping.id})}" th:object="${exitMapping}" method="post" class="form-horizontal" style="width: 100%">
+            <div class="form-group">
+                <label for="roomName" class="col-sm-2 control-label">Room Name</label>
+                <div class="col-sm-10">
+                    <input type="text" th:field="*{roomName}" id="roomName" placeholder=*{roomName} class="col-4">
+                    <p class="text-danger" th:if="${#fields.hasErrors('roomName')}" th:errors="*{roomName}"></p>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="exitName" class="col-sm-2 control-label">Exit Name (Interactable Name)</label>
+                <div class="col-sm-10">
+                    <input type="text" th:field="*{exitName}" id="exitName" placeholder=*{exitName} class="col-4">
+                    <p class="text-danger" th:if="${#fields.hasErrors('exitName')}" th:errors="*{exitName}"></p>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="exitDirection" class="col-sm-2 control-label">Exit Direction</label>
+                <div class="col-sm-10">
+                    <input type="text" th:field="*{exitName}" id="exitDirection" placeholder=*{exitDirection} class="col-4">
+                    <p class="text-danger" th:if="${#fields.hasErrors('exitDirection')}" th:errors="*{exitDirection}"></p>
+                </div>
+            </div>
+
+
+
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <input type="hidden" th:field="*{id}">
+                    <a class="btn btn-danger btn-sm" href="/admin/manage">Cancel</a>
+                    <input class="btn btn-primary btn-sm" type="submit" value="Update Exit Mapping">
+                </div>
+            </div>
+
+        </form>
+    </div>
+
+    <div id="btmL">
+        <h2>Find me on social media</h2>
+        <h3><strong>A new project idea?</strong> Contact me!</h3>
+        <a href="https://twitter.com/Suracki" class="fa fa-twitter"></a>
+        <a href="https://github.com/Suracki" class="fa fa-github"></a>
+        <a href="https://www.linkedin.com/in/simon-linford/" class="fa fa-linkedin"></a>
+    </div>
+    <div id="btmR"></div>
+
+</div>
+</body>
+</html>
