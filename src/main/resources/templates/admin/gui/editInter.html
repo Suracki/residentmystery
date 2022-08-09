@@ -76,10 +76,28 @@
         </div>
       </div>
       <div class="form-group">
+        <label for="locked" class="col-sm-2 control-label">Locked?</label>
+        <div class="col-sm-10">
+          <input type="checkbox" th:field="*{locked}" id="locked" value="${locked}" th:checked="${locked}">
+        </div>
+      </div>
+      <div class="form-group">
         <label for="target" class="col-sm-2 control-label">Target (Interactable Name, can be blank)</label>
         <div class="col-sm-10">
           <input type="text" th:field="*{target}" id="target" placeholder=*{target} class="col-4">
           <p class="text-danger" th:if="${#fields.hasErrors('target')}" th:errors="*{target}"></p>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="gameEnd" class="col-sm-2 control-label">Ends Game?</label>
+        <div class="col-sm-10">
+          <input type="checkbox" th:field="*{gameEnd}" id="gameEnd" value="*{gameEnd}">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="endName" class="col-sm-2 control-label">End Name (must be set if this ends the game)</label>
+        <div class="col-sm-10">
+          <input type="text" th:field="*{endName}" id="endName" placeholder="*{endName}" class="col-4">
         </div>
       </div>
 

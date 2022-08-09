@@ -2,10 +2,7 @@ package com.suracki.residentmystery.service;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.suracki.residentmystery.domain.ExitMapping;
-import com.suracki.residentmystery.domain.Interactable;
-import com.suracki.residentmystery.domain.Loot;
-import com.suracki.residentmystery.domain.Room;
+import com.suracki.residentmystery.domain.*;
 import com.suracki.residentmystery.domain.temporary.GameDao;
 import com.suracki.residentmystery.domain.temporary.GameData;
 import com.suracki.residentmystery.domain.temporary.GameState;
@@ -28,6 +25,7 @@ public class AdminService {
     InteractableRepository interactableRepository;
     LootRepository lootRepository;
     ExitMappingRepository exitMappingRepository;
+    EndingRepository endingRepository;
 
     private Gson gson;
 
@@ -35,12 +33,13 @@ public class AdminService {
 
     public AdminService(UserRepository userRepository, RoomRepository roomRepository,
                        InteractableRepository interactableRepository, LootRepository lootRepository,
-                       ExitMappingRepository exitMappingRepository) {
+                       ExitMappingRepository exitMappingRepository, EndingRepository endingRepository) {
         this.userRepository = userRepository;
         this.roomRepository = roomRepository;
         this.interactableRepository = interactableRepository;
         this.lootRepository = lootRepository;
         this.exitMappingRepository = exitMappingRepository;
+        this.endingRepository = endingRepository;
         gson = new GsonBuilder().setLenient().setPrettyPrinting().create();
         logger.info("AdminService created");
 
@@ -55,6 +54,7 @@ public class AdminService {
         model.addAttribute("interactables", interactableRepository.findAll());
         model.addAttribute("loots", lootRepository.findAll());
         model.addAttribute("exitMappings", exitMappingRepository.findAll());
+        model.addAttribute("endings", endingRepository.findAll());
 
         return "admin/manage";
     }
@@ -67,12 +67,14 @@ public class AdminService {
         List<Interactable> interactables = interactableRepository.findAll();
         List<Loot> loots = lootRepository.findAll();
         List<ExitMapping> exitMappings = exitMappingRepository.findAll();
+        List<Ending> endings = endingRepository.findAll();
 
         GameData gameData = new GameData();
         gameData.setRooms(rooms);
         gameData.setLoots(loots);
         gameData.setInteractables(interactables);
         gameData.setExitMappings(exitMappings);
+        gameData.setEndings(endings);
 
         String gameJson = gson.toJson(gameData);
         model.addAttribute("gameData", gameJson);
@@ -92,37 +94,44 @@ public class AdminService {
             List<Interactable> interactables = importedData.getInteractables();
             List<Loot> loots = importedData.getLoots();
             List<ExitMapping> exitMappings = importedData.getExitMappings();
+            List<Ending> endings = importedData.getEndings();
 
             logger.info("JSON parsed successfully. Data found:");
             logger.info("Rooms: " + rooms.size());
             logger.info("Interactables: " + interactables.size());
             logger.info("Loots: " + loots.size());
             logger.info("Exit Mappings: " + exitMappings.size());
+            logger.info("Endings: " + endings.size());
 
             logger.info("Starting database: Rooms: " + roomRepository.findAll().size() +
                     " Interactables: " + interactableRepository.findAll().size() +
                     " Loots: " + lootRepository.findAll().size() +
-                    " Exit Mappings: " + exitMappingRepository.findAll().size());
+                    " Exit Mappings: " + exitMappingRepository.findAll().size() +
+                    " Endings: " + endingRepository.findAll().size());
 
             roomRepository.deleteAll();
             interactableRepository.deleteAll();
             lootRepository.deleteAll();
             exitMappingRepository.deleteAll();
+            endingRepository.deleteAll();
 
             logger.info("Cleared database: Rooms: " + roomRepository.findAll().size() +
                     " Interactables: " + interactableRepository.findAll().size() +
                     " Loots: " + lootRepository.findAll().size() +
-                    " Exit Mappings: " + exitMappingRepository.findAll().size());
+                    " Exit Mappings: " + exitMappingRepository.findAll().size() +
+                    " Endings: " + endingRepository.findAll().size());
 
             roomRepository.saveAll(rooms);
             interactableRepository.saveAll(interactables);
             lootRepository.saveAll(loots);
             exitMappingRepository.saveAll(exitMappings);
+            endingRepository.saveAll(endings);
 
             logger.info("Updated database: Rooms: " + roomRepository.findAll().size() +
                     " Interactables: " + interactableRepository.findAll().size() +
                     " Loots: " + lootRepository.findAll().size() +
-                    " Exit Mappings: " + exitMappingRepository.findAll().size());
+                    " Exit Mappings: " + exitMappingRepository.findAll().size() +
+                    " Endings: " + endingRepository.findAll().size());
 
             model.addAttribute("imported", "true");
             return "/admin/landing";
@@ -257,7 +266,6 @@ public class AdminService {
         return manage(model, "interactable");
     }
 
-
     public String addExit(Model model, ExitMapping exitMapping) {
         logger.info("AdminService 'addExit' called.");
         return "admin/gui/addExitMap";
@@ -297,5 +305,46 @@ public class AdminService {
         exitMapping.setId(id);
         exitMappingRepository.save(exitMapping);
         return manage(model, "exitMapping");
+    }
+
+    public String addEnding(Model model, Ending ending) {
+        logger.info("AdminService 'addEnding' called.");
+        return "admin/gui/addEnding";
+    }
+
+    public String validateEnding(Model model, BindingResult result, Ending ending) {
+        logger.info("AdminService 'validateEnding' called.");
+        if (!result.hasErrors()) {
+            endingRepository.save(ending);
+            return manage(model, "ending");
+        }
+        return "admin/gui/addEnding";
+    }
+
+    public String deleteEnding(Integer id, Model model) {
+        endingRepository.deleteById(id);
+        return manage(model, "ending");
+    }
+
+    public String updateEnding(int id, Model model) {
+        try {
+            Ending ending = endingRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid id:" + id));
+            model.addAttribute("ending", ending);
+            return "admin/gui/editEnding";
+        }
+        catch (IllegalArgumentException e) {
+            model.addAttribute("edit","id_not_found");
+            return "/admin/landing";
+        }
+
+    }
+
+    public String updateEnding(int id, Ending ending, BindingResult result, Model model) {
+        if (result.hasErrors()) {
+            return "admin/gui/editEnding";
+        }
+        ending.setId(id);
+        endingRepository.save(ending);
+        return manage(model, "ending");
     }
 }

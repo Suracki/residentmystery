@@ -4,6 +4,7 @@ import com.suracki.residentmystery.domain.*;
 import com.suracki.residentmystery.domain.temporary.GameState;
 import com.suracki.residentmystery.repository.*;
 import com.suracki.residentmystery.security.RoleCheck;
+import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.*;
 
 @Service
@@ -22,6 +27,7 @@ public class GameService {
     InteractableRepository interactableRepository;
     LootRepository lootRepository;
     ExitMappingRepository exitMappingRepository;
+    EndingRepository endingRepository;
     static Map<String, GameState> gameStates;
 
     private RoleCheck roleCheck;
@@ -32,12 +38,14 @@ public class GameService {
 
     public GameService(UserRepository userRepository, RoomRepository roomRepository,
                        InteractableRepository interactableRepository, LootRepository lootRepository,
-                       ExitMappingRepository exitMappingRepository, RoleCheck roleCheck) {
+                       ExitMappingRepository exitMappingRepository, EndingRepository endingRepository,
+                       RoleCheck roleCheck) {
         this.userRepository = userRepository;
         this.roomRepository = roomRepository;
         this.interactableRepository = interactableRepository;
         this.lootRepository = lootRepository;
         this.exitMappingRepository = exitMappingRepository;
+        this.endingRepository = endingRepository;
         this.roleCheck = roleCheck;
         gameStates = new LinkedHashMap<>() {
             @Override
@@ -118,6 +126,19 @@ public class GameService {
         chest.setContents("Medal");
         chest.setTarget("");
         interactableRepository.save(chest);
+        Interactable escape = new Interactable();
+        escape.setInteractableName("Escape Route");
+        escape.setInteractableDesc("The way out. A large door, with a small round indendation.");
+        escape.setLocked(true);
+        escape.setKeyName("Medal");
+        escape.setSolvedText("You place the medal in the indentation, and the door opens.");
+        escape.setAlreadySolvedText("The door is open.");
+        escape.setRoomName("Outside");
+        escape.setContents("");
+        escape.setTarget("");
+        escape.setGameEnd(true);
+        escape.setEndName("Good End");
+        interactableRepository.save(escape);
 
         //set up exit mappings
 
@@ -159,6 +180,12 @@ public class GameService {
         outside.setStartRoom(false);
         roomRepository.save(outside);
 
+        //set up ending
+        Ending ending = new Ending();
+        ending.setEndingText("You have escaped the mansion! You are now free, you definitely should not go right back inside to try again. Oh no, definitely not.");
+        ending.setEndingName("Good End");
+        endingRepository.save(ending);
+
         logger.info("GameService setup completed.");
     }
 
@@ -192,6 +219,7 @@ public class GameService {
         gameState.setRooms(roomRepository.findAll());
         gameState.setInteractables(interactableRepository.findAll());
         gameState.setLoots(lootRepository.findAll());
+        gameState.setStartTime(LocalDateTime.now());
 
         gameStates.put(user.getUsername(), gameState);
 
@@ -392,6 +420,7 @@ public class GameService {
                 logger.info("User has the key, unlocking!");
                 interactable.setLocked(false);
                 model.addAttribute("lockstate", "unlocking");
+
                 if (!interactable.getTarget().equals("")){
                     logger.info("Interactable has target object: " + interactable.getTarget() + ". Unlocking...");
                     for (Interactable iterInteractable : gameState.getInteractables()){
@@ -409,6 +438,11 @@ public class GameService {
                     model.addAttribute("interactableSolvedText", interactable.getSolvedText());
                     return loot(model, interactable.getContents());
                 }
+
+                if(interactable.isGameEnd()) {
+                    logger.info("User has solved the game, forwarding to ending.");
+                    return ending(model, interactableName);
+                }
             }
             else {
                 logger.info("User does not have the key!");
@@ -423,6 +457,7 @@ public class GameService {
 
         }
         else {
+
             logger.info("Interactable " + interactable.getInteractableName() + " has already been unlocked.");
 
             model.addAttribute("lockstate", "notlocked");
@@ -438,6 +473,41 @@ public class GameService {
 
 
         return "game/interactable";
+    }
+
+    public String ending(Model model, String interactableName) {
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String name = auth.getName();
+        User user = userRepository.findByUsername(name);
+
+        logger.info("GameService 'ending' called for user " + name + ", from object " + interactableName);
+
+        if (user == null) {
+            logger.error("No user found in database with name: " + name);
+            model.addAttribute("user","error");
+            return "index";
+        }
+
+        GameState gameState = gameStates.get(user.getUsername());
+        if (gameStates.get(user.getUsername())==null) {
+            //No GameState found for user. Need to restart the game.
+            logger.error("No gamestate found for name: " + name + ", restarting and creating new session.");
+            return start(model);
+        }
+        gameState.logState();
+        Interactable interactable = interactableRepository.findByInteractableName(interactableName);
+
+        model.addAttribute("endingName", endingRepository.findByName(interactable.getEndName()).getEndingName());
+        model.addAttribute("ending", endingRepository.findByName(interactable.getEndName()).getEndingText());
+        model.addAttribute("time", DurationFormatUtils.formatDuration(Duration.between(gameState.getStartTime(), LocalDateTime.now()).toMillis(), "**H:mm:ss**", true));
+
+        return "game/ending";
+
+
+
+
+
     }
 
     public String loot(Model model, String lootName) {
