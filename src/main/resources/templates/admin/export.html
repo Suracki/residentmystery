@@ -10,8 +10,7 @@
 <div class="container-collector" id="main">
     <div class="container-content" id="content_flex_top_collector">
         <div class="col-6">
-            <p><a class="btn btn-primary btn-sm col-xs-2" th:href="@{/game/restart}">Restart Game</a></p>
-            <p><th:block th:if="${admin != null}"><a class="btn btn-primary btn-sm col-xs-2" th:href="@{/admin/landing}">Admin Page</a></th:block></p>
+
         </div>
 
         <div class="col-6 text-right">
@@ -27,23 +26,16 @@
 
     <div class="container-content" id="content_flex_center">
         <div class="form-group">
-            <h6> You examine the <th:block th:text="${interactableName}"></th:block></h6>
+            <h6>Current Game Data:</h6>
             <p>
-            <p><th:block th:text="${interactableDesc}"></th:block></p>
-
-            <div class="alert alert-warning" role="alert" th:if="${lockstate == 'nokey'}">
-                It appears you do not have the required item to solve this currently.
-            </div>
-            <th:block th:if="${lockstate == 'notlocked'}"><p><th:block th:text="${interactableAlreadySolvedText}"></th:block></p></th:block>
-            <div class="alert alert-success" role="alert" th:if="${lockstate == 'unlocking'}">
-                <th:block th:text="${interactableSolvedText}"></th:block>
-            </div>
+                <td th:text="${gameData}"></td>
             </p>
-            <p>
-                <a th:href="@{/game/start/}"/>
-                Return to <td th:text="${roomName}"></td>
-            </a>
-            </p>
+            <div class="alert alert-dark" role="alert">
+                <a th:href="@{/admin/import}"/>Import New Game Data</a>
+            </div>
+            <div class="alert alert-dark" role="alert">
+                <a th:href="@{/admin/manage}"/>Manage Game Data</a>
+            </div>
         </div>
     </div>
 

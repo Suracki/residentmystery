@@ -1,6 +1,7 @@
 package com.suracki.residentmystery.domain;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -13,8 +14,10 @@ public class Room {
     @GeneratedValue(strategy= GenerationType.AUTO)
     private Integer id;
 
+    @NotEmpty(message = "Room Name is mandatory.")
     private String roomName;
 
+    @NotEmpty(message = "Room Description is mandatory.")
     private String roomDesc;
 
     private boolean startRoom;

@@ -1,6 +1,7 @@
 package com.suracki.residentmystery.domain;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
 
 @Entity
 @Table(name = "interactables")
@@ -10,15 +11,19 @@ public class Interactable {
     @GeneratedValue(strategy= GenerationType.AUTO)
     private Integer id;
 
+    @NotEmpty(message = "Interactable name is mandatory.")
     private String interactableName;
 
+    @NotEmpty(message = "Interactable description is mandatory.")
     private String interactableDesc;
 
+    @NotEmpty(message = "Solved text is mandatory.")
     private String solvedText;
 
+    @NotEmpty(message = "Already Solved text is mandatory.")
     private String alreadySolvedText;
 
-    private String[] contents;
+    private String contents;
 
     private boolean used;
 
@@ -26,6 +31,7 @@ public class Interactable {
 
     private String keyName;
 
+    @NotEmpty(message = "Enter name of room Interactable is located in.")
     private String roomName;
 
     private String target;
@@ -78,11 +84,14 @@ public class Interactable {
         this.solvedText = solvedText;
     }
 
-    public String[] getContents() {
+    public String getContents() {
+        if (contents == null) {
+            contents = "";
+        }
         return contents;
     }
 
-    public void setContents(String[] contents) {
+    public void setContents(String contents) {
         this.contents = contents;
     }
 

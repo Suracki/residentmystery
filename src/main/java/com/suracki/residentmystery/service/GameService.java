@@ -3,8 +3,10 @@ package com.suracki.residentmystery.service;
 import com.suracki.residentmystery.domain.*;
 import com.suracki.residentmystery.domain.temporary.GameState;
 import com.suracki.residentmystery.repository.*;
+import com.suracki.residentmystery.security.RoleCheck;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -22,18 +24,21 @@ public class GameService {
     ExitMappingRepository exitMappingRepository;
     static Map<String, GameState> gameStates;
 
+    private RoleCheck roleCheck;
+
     private static int concurrentPlayerCacheSize = 1000;
 
     private static final Logger logger = LogManager.getLogger(GameService.class);
 
     public GameService(UserRepository userRepository, RoomRepository roomRepository,
                        InteractableRepository interactableRepository, LootRepository lootRepository,
-                       ExitMappingRepository exitMappingRepository) {
+                       ExitMappingRepository exitMappingRepository, RoleCheck roleCheck) {
         this.userRepository = userRepository;
         this.roomRepository = roomRepository;
         this.interactableRepository = interactableRepository;
         this.lootRepository = lootRepository;
         this.exitMappingRepository = exitMappingRepository;
+        this.roleCheck = roleCheck;
         gameStates = new LinkedHashMap<>() {
             @Override
             protected boolean removeEldestEntry(final Map.Entry eldest) {
@@ -61,6 +66,14 @@ public class GameService {
         ring.setLootDesc("A gold ring, with something indecipherable engraved around the band.");
         ring.setRoomName("Dining Room");
         lootRepository.save(ring);
+        Loot goldKey = new Loot();
+        goldKey.setLootName("Gold Key");
+        goldKey.setLootDesc("An old key made from gold.");
+        lootRepository.save(goldKey);
+        Loot medal = new Loot();
+        medal.setLootName("Medal");
+        medal.setLootDesc("A gold medal, with 'you win!' engraved on it.");
+        lootRepository.save(medal);
 
         //set up interactables:
         Interactable redDoor = new Interactable();
@@ -92,7 +105,19 @@ public class GameService {
         statue.setAlreadySolvedText("You have already placed the Ring on the statue's finger. There is nothing else to do here.");
         statue.setRoomName("Entrance Hall");
         statue.setTarget("Main Door");
+        statue.setContents("Gold Key");
         interactableRepository.save(statue);
+        Interactable chest = new Interactable();
+        chest.setInteractableName("Chest");
+        chest.setInteractableDesc("A large wooden chest");
+        chest.setLocked(true);
+        chest.setKeyName("Red Key");
+        chest.setSolvedText("Your key fits the lock without any trouble, and you unlock the chest.");
+        chest.setAlreadySolvedText("The unlocked chest is empty.");
+        chest.setRoomName("Outside");
+        chest.setContents("Medal");
+        chest.setTarget("");
+        interactableRepository.save(chest);
 
         //set up exit mappings
 
@@ -153,11 +178,15 @@ public class GameService {
             return "index";
         }
 
+        roleCheck(model);
+
         if (gameStates.get(user.getUsername())!=null) {
             //User is already mid-game
             logger.info("GameState found for User; User is mid-game in room " + gameStates.get(user.getUsername()).getCurrentRoom() + ", continuing...");
             return continueGame(model);
         }
+
+
 
         GameState gameState = new GameState();
         gameState.setRooms(roomRepository.findAll());
@@ -266,6 +295,8 @@ public class GameService {
             return "index";
         }
 
+        roleCheck(model);
+
         GameState gameState = gameStates.get(user.getUsername());
         if (gameStates.get(user.getUsername())==null) {
             //No GameState found for user. Need to restart the game.
@@ -320,6 +351,7 @@ public class GameService {
         model.addAttribute("roomDesc", room.getRoomDesc());
         model.addAttribute("interactables", interactableRepository.findByRoomname(room.getRoomName()));
         model.addAttribute("loots", loots);
+        model.addAttribute("inventory", inventory);
 
         logger.info("GameState found for user " + name + ", continuning game from room " + room.getRoomName() + ".");
         logger.info("Room contains " + interactableRepository.findByRoomname(room.getRoomName()).size() + " interactables, "
@@ -369,6 +401,13 @@ public class GameService {
                         }
                     }
 
+                }
+
+                if (!interactable.getContents().equals("")) {
+                    logger.info("Solved interactable contains loot! Redirecting to loot method.");
+                    model.addAttribute("interactableName", interactable.getInteractableName());
+                    model.addAttribute("interactableSolvedText", interactable.getSolvedText());
+                    return loot(model, interactable.getContents());
                 }
             }
             else {
@@ -434,6 +473,39 @@ public class GameService {
         model.addAttribute("roomName", room.getRoomName());
 
         return "game/loot";
+
+    }
+
+    public String examine(Model model, String lootName) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String name = auth.getName();
+        User user = userRepository.findByUsername(name);
+
+        logger.info("GameService 'examine' called for user " + name + ", object " + lootName);
+
+        if (user == null) {
+            logger.error("No user found in database with name: " + name);
+            model.addAttribute("user","error");
+            return "index";
+        }
+
+        GameState gameState = gameStates.get(user.getUsername());
+        if (gameStates.get(user.getUsername())==null) {
+            //No GameState found for user. Need to restart the game.
+            logger.error("No gamestate found for name: " + name + ", restarting and creating new session.");
+            return start(model);
+        }
+        gameState.logState();
+
+        Loot loot = gameState.findLoot(lootName);
+        Room room = gameState.findRoom(gameState.getCurrentRoom());
+
+        model.addAttribute("lootName", loot.getLootName());
+        model.addAttribute("lootDescription", loot.getLootDesc());
+
+        model.addAttribute("roomName", room.getRoomName());
+
+        return "game/examine";
 
     }
 
@@ -531,6 +603,13 @@ public class GameService {
 
         gameState.setCurrentRoom(roomName);
         return continueGame(model);
+    }
+
+    private void roleCheck(Model model) {
+        if (roleCheck.RoleCheck("Admin")) {
+            logger.info("User is an ADMIN");
+            model.addAttribute("admin", "true");
+        }
     }
 
 

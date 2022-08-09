@@ -10,7 +10,8 @@
 <div class="container-collector" id="main">
     <div class="container-content" id="content_flex_top_collector">
         <div class="col-6">
-
+            <p><a class="btn btn-primary btn-sm col-xs-2" th:href="@{/game/restart}">Restart Game</a></p>
+            <p><th:block th:if="${admin != null}"><a class="btn btn-primary btn-sm col-xs-2" th:href="@{/admin/landing}">Admin Page</a></th:block></p>
         </div>
 
         <div class="col-6 text-right">
@@ -26,6 +27,11 @@
 
     <div class="container-content" id="content_flex_center">
         <div class="form-group">
+            <th:block th:if="${interactableName != null}">
+                <h6> You examine the <th:block th:text="${interactableName}"></th:block></h6>
+                <p><th:block th:text="${interactableSolvedText}"></th:block></p><br>
+                <p>Within the <th:block th:text="${interactableName}"></th:block> you find a <th:block th:text="${lootName}"></th:block></p>
+            </th:block>
             <h6> You examine the <th:block th:text="${lootName}"></th:block></h6>
             <p>
             <p><th:block th:text="${lootDescription}"></th:block></p>
@@ -38,7 +44,6 @@
                 Return to <td th:text="${roomName}"></td>
             </a>
             </p>
-            <p><a class="btn btn-primary btn-sm col-xs-2" th:href="@{/game/restart}">Restart Game</a></p>
         </div>
     </div>
 
