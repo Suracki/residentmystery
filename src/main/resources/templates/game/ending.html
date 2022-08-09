@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title> Resident Mystery </title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" >
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css}">
+</head>
+<body>
+<div class="container-collector" id="main">
+    <div class="container-content" id="content_flex_top_collector">
+        <div class="col-6">
+            <p><a class="btn btn-primary btn-sm col-xs-2" th:href="@{/game/restart}">Restart Game</a></p>
+            <p><th:block th:if="${admin != null}"><a class="btn btn-primary btn-sm col-xs-2" th:href="@{/admin/landing}">Admin Page</a></th:block></p>
+        </div>
+
+        <div class="col-6 text-right">
+            Logged in user: <b th:inline="text"  class="user"> [[${#httpServletRequest.remoteUser}]] </b>
+            <form th:action="@{/app-logout}" method="POST" name="logoutForm">
+                <input type="submit" value="Logout"/>
+            </form>
+        </div>
+    </div>
+
+
+
+
+    <div class="container-content" id="content_flex_center">
+        <div class="form-group">
+            <h6><th:block th:text="${endingName}"></th:block></h6>
+            <p>
+                <th:block th:text="${ending}"></th:block>
+            </p>
+            <p>Game Time: <th:block th:text="${time}"></th:block></p>
+        </div>
+    </div>
+
+    <div id="btmL">
+        <h2>Find me on social media</h2>
+        <h3><strong>A new project idea?</strong> Contact me!</h3>
+        <a href="https://twitter.com/Suracki" class="fa fa-twitter"></a>
+        <a href="https://github.com/Suracki" class="fa fa-github"></a>
+        <a href="https://www.linkedin.com/in/simon-linford/" class="fa fa-linkedin"></a>
+    </div>
+    <div id="btmR"></div>
+
+</div>
+</body>
+</html>

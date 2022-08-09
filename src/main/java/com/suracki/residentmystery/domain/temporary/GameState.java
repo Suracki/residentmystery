@@ -6,6 +6,7 @@ import com.suracki.residentmystery.domain.Room;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class GameState {
@@ -15,6 +16,7 @@ public class GameState {
     private List<Interactable> interactables;
     private String currentRoom;
     private List<String> currentLoot;
+    private LocalDateTime startTime;
 
     private static final Logger logger = LogManager.getLogger(GameState.class);
 
@@ -109,5 +111,13 @@ public class GameState {
 
     public void removeLoot(String lootName) {
         currentLoot.remove(lootName);
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
     }
 }

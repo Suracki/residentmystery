@@ -1,9 +1,6 @@
 package com.suracki.residentmystery.domain.temporary;
 
-import com.suracki.residentmystery.domain.ExitMapping;
-import com.suracki.residentmystery.domain.Interactable;
-import com.suracki.residentmystery.domain.Loot;
-import com.suracki.residentmystery.domain.Room;
+import com.suracki.residentmystery.domain.*;
 
 import java.util.List;
 
@@ -13,6 +10,7 @@ public class GameData {
     List<Interactable> interactables;
     List<Loot> loots;
     List<ExitMapping> exitMappings;
+    List<Ending> endings;
 
     public List<Room> getRooms() {
         return rooms;
@@ -44,5 +42,13 @@ public class GameData {
 
     public void setExitMappings(List<ExitMapping> exitMappings) {
         this.exitMappings = exitMappings;
+    }
+
+    public List<Ending> getEndings() {
+        return endings;
+    }
+
+    public void setEndings(List<Ending> endings) {
+        this.endings = endings;
     }
 }

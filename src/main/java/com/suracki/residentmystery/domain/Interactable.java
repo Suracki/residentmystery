@@ -29,6 +29,10 @@ public class Interactable {
 
     private boolean locked;
 
+    private boolean gameEnd;
+
+    private String endName;
+
     private String keyName;
 
     @NotEmpty(message = "Enter name of room Interactable is located in.")
@@ -125,5 +129,21 @@ public class Interactable {
 
     public void setAlreadySolvedText(String alreadySolvedText) {
         this.alreadySolvedText = alreadySolvedText;
+    }
+
+    public boolean isGameEnd() {
+        return gameEnd;
+    }
+
+    public void setGameEnd(boolean gameEnd) {
+        this.gameEnd = gameEnd;
+    }
+
+    public String getEndName() {
+        return endName;
+    }
+
+    public void setEndName(String endName) {
+        this.endName = endName;
     }
 }

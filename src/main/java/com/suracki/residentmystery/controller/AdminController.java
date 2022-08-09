@@ -1,9 +1,6 @@
 package com.suracki.residentmystery.controller;
 
-import com.suracki.residentmystery.domain.ExitMapping;
-import com.suracki.residentmystery.domain.Interactable;
-import com.suracki.residentmystery.domain.Loot;
-import com.suracki.residentmystery.domain.Room;
+import com.suracki.residentmystery.domain.*;
 import com.suracki.residentmystery.domain.temporary.GameDao;
 import com.suracki.residentmystery.domain.temporary.GameData;
 import com.suracki.residentmystery.security.RoleCheck;
@@ -191,7 +188,7 @@ public class AdminController {
 
     @GetMapping("/admin/deleteLoot/{id}")
     public String deleteLoot(@PathVariable("id") Integer id, Model model) {
-        logger.info("User connected to admin/deleteLoot endpoint for room with id " + id);
+        logger.info("User connected to admin/deleteLoot endpoint for loot with id " + id);
         if (!roleCheck.RoleCheck("Admin")) {
             logger.info("User is not an ADMIN, logging out and redirecting");
             SecurityContextHolder.getContext().getAuthentication().setAuthenticated(false);
@@ -203,7 +200,7 @@ public class AdminController {
     @GetMapping("/admin/updateLoot/{id}")
     public String updateLoot(@PathVariable("id") Integer id, Model model)
     {
-        logger.info("User connected to admin/updateLoot endpoint for room with id " + id);
+        logger.info("User connected to admin/updateLoot endpoint for loot with id " + id);
         if (!roleCheck.RoleCheck("Admin")) {
             logger.info("User is not an ADMIN, logging out and redirecting");
             SecurityContextHolder.getContext().getAuthentication().setAuthenticated(false);
@@ -216,7 +213,7 @@ public class AdminController {
     public String updateRoom(@PathVariable("id") Integer id, Model model,
                              @Valid Loot loot, BindingResult result)
     {
-        logger.info("User connected to admin/updateLoot POST endpoint for room with id " + id);
+        logger.info("User connected to admin/updateLoot POST endpoint for loot with id " + id);
         if (!roleCheck.RoleCheck("Admin")) {
             logger.info("User is not an ADMIN, logging out and redirecting");
             SecurityContextHolder.getContext().getAuthentication().setAuthenticated(false);
@@ -251,7 +248,7 @@ public class AdminController {
 
     @GetMapping("/admin/deleteInter/{id}")
     public String deleteInter(@PathVariable("id") Integer id, Model model) {
-        logger.info("User connected to admin/deleteInter endpoint for room with id " + id);
+        logger.info("User connected to admin/deleteInter endpoint for interactable with id " + id);
         if (!roleCheck.RoleCheck("Admin")) {
             logger.info("User is not an ADMIN, logging out and redirecting");
             SecurityContextHolder.getContext().getAuthentication().setAuthenticated(false);
@@ -263,7 +260,7 @@ public class AdminController {
     @GetMapping("/admin/updateInter/{id}")
     public String updateInter(@PathVariable("id") Integer id, Model model)
     {
-        logger.info("User connected to admin/updateInter endpoint for room with id " + id);
+        logger.info("User connected to admin/updateInter endpoint for interactable with id " + id);
         if (!roleCheck.RoleCheck("Admin")) {
             logger.info("User is not an ADMIN, logging out and redirecting");
             SecurityContextHolder.getContext().getAuthentication().setAuthenticated(false);
@@ -276,7 +273,7 @@ public class AdminController {
     public String updateInter(@PathVariable("id") Integer id, Model model,
                              @Valid Interactable interactable, BindingResult result)
     {
-        logger.info("User connected to admin/updateInter POST endpoint for room with id " + id);
+        logger.info("User connected to admin/updateInter POST endpoint for interactable with id " + id);
         if (!roleCheck.RoleCheck("Admin")) {
             logger.info("User is not an ADMIN, logging out and redirecting");
             SecurityContextHolder.getContext().getAuthentication().setAuthenticated(false);
@@ -311,7 +308,7 @@ public class AdminController {
 
     @GetMapping("/admin/deleteExit/{id}")
     public String deleteExit(@PathVariable("id") Integer id, Model model) {
-        logger.info("User connected to admin/deleteExit endpoint for room with id " + id);
+        logger.info("User connected to admin/deleteExit endpoint for exit with id " + id);
         if (!roleCheck.RoleCheck("Admin")) {
             logger.info("User is not an ADMIN, logging out and redirecting");
             SecurityContextHolder.getContext().getAuthentication().setAuthenticated(false);
@@ -323,7 +320,7 @@ public class AdminController {
     @GetMapping("/admin/updateExit/{id}")
     public String updateExit(@PathVariable("id") Integer id, Model model)
     {
-        logger.info("User connected to admin/updateExit endpoint for room with id " + id);
+        logger.info("User connected to admin/updateExit endpoint for exit with id " + id);
         if (!roleCheck.RoleCheck("Admin")) {
             logger.info("User is not an ADMIN, logging out and redirecting");
             SecurityContextHolder.getContext().getAuthentication().setAuthenticated(false);
@@ -336,12 +333,72 @@ public class AdminController {
     public String updateExit(@PathVariable("id") Integer id, Model model,
                              @Valid ExitMapping exitMapping, BindingResult result)
     {
-        logger.info("User connected to admin/updateExit POST endpoint for room with id " + id);
+        logger.info("User connected to admin/updateExit POST endpoint for exit with id " + id);
         if (!roleCheck.RoleCheck("Admin")) {
             logger.info("User is not an ADMIN, logging out and redirecting");
             SecurityContextHolder.getContext().getAuthentication().setAuthenticated(false);
             return "redirect:/";
         }
         return adminService.updateExit(id, exitMapping, result, model);
+    }
+
+    @GetMapping("/admin/addEnding")
+    public String addEnding(Model model, Ending ending)
+    {
+        logger.info("User connected to /admin/addEnding endpoint");
+        if (!roleCheck.RoleCheck("Admin")) {
+            logger.info("User is not an ADMIN, logging out and redirecting");
+            SecurityContextHolder.getContext().getAuthentication().setAuthenticated(false);
+            return "redirect:/";
+        }
+        return adminService.addEnding(model, ending);
+    }
+
+    @PostMapping("/admin/addEnding/validate")
+    public String addEndingValidate(Model model, @Valid Ending ending, BindingResult result)
+    {
+        logger.info("User connected to /admin/addEnding/validate endpoint");
+        if (!roleCheck.RoleCheck("Admin")) {
+            logger.info("User is not an ADMIN, logging out and redirecting");
+            SecurityContextHolder.getContext().getAuthentication().setAuthenticated(false);
+            return "redirect:/";
+        }
+        return adminService.validateEnding(model, result, ending);
+    }
+
+    @GetMapping("/admin/deleteEnding/{id}")
+    public String deleteEnding(@PathVariable("id") Integer id, Model model) {
+        logger.info("User connected to admin/deleteEnding endpoint for ending with id " + id);
+        if (!roleCheck.RoleCheck("Admin")) {
+            logger.info("User is not an ADMIN, logging out and redirecting");
+            SecurityContextHolder.getContext().getAuthentication().setAuthenticated(false);
+            return "redirect:/";
+        }
+        return adminService.deleteEnding(id, model);
+    }
+
+    @GetMapping("/admin/updateEnding/{id}")
+    public String updateEnding(@PathVariable("id") Integer id, Model model)
+    {
+        logger.info("User connected to admin/updateEnding endpoint for ending with id " + id);
+        if (!roleCheck.RoleCheck("Admin")) {
+            logger.info("User is not an ADMIN, logging out and redirecting");
+            SecurityContextHolder.getContext().getAuthentication().setAuthenticated(false);
+            return "redirect:/";
+        }
+        return adminService.updateEnding(id, model);
+    }
+
+    @PostMapping("/admin/updateEnding/{id}")
+    public String updateEnding(@PathVariable("id") Integer id, Model model,
+                             @Valid Ending ending, BindingResult result)
+    {
+        logger.info("User connected to admin/updateEnding POST endpoint for ending with id " + id);
+        if (!roleCheck.RoleCheck("Admin")) {
+            logger.info("User is not an ADMIN, logging out and redirecting");
+            SecurityContextHolder.getContext().getAuthentication().setAuthenticated(false);
+            return "redirect:/";
+        }
+        return adminService.updateEnding(id, ending, result, model);
     }
 }

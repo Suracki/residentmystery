@@ -15,6 +15,7 @@
             <a href="/admin/filter?type=interactable" class="btn btn-primary btn-sm">Interactables</a>
             <a href="/admin/filter?type=loot" class="btn btn-primary btn-sm">Loot</a>
             <a href="/admin/filter?type=exitMapping" class="btn btn-primary btn-sm">Exits</a>
+            <a href="/admin/filter?type=ending" class="btn btn-primary btn-sm">Endings</a>
         </div>
 
         <div class="col-6 text-right">
@@ -136,7 +137,42 @@
                     </tbody>
                 </table>
             </th:block>
+            <th:block th:if="${type == 'all' or type == 'ending'}">
+                <h6>Endings</h6>
+                <div class="form-group">
+                    <a href="/admin/addEnding" class="btn btn-primary btn-sm">Add New</a>
+                    <a href="/admin/filter?type=ending" class="btn btn-primary btn-sm">Filter</a>
+                </div>
+                <table class="table table-bordered">
+                    <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Ending Name</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="ending : ${endings}">
+                        <td style="width: 10%" th:text="${ending.id}"></td>
+                        <td th:text="${ending.endingName}"></td>
+                        <td style="width: 15%" class="text-center">
+                            <a th:href="@{/admin/updateEnding/{id}(id=${ending.id})}">Edit</a>&nbsp;|&nbsp;
+                            <a th:href="@{/admin/deleteEnding/{id}(id=${ending.id})}">Delete</a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </th:block>
+
+            <div class="alert alert-dark" role="alert">
+                <a th:href="@{/admin/export}"/>Export Current Game Data</a>
+            </div>
+            <div class="alert alert-dark" role="alert">
+                <a th:href="@{/admin/import}"/>Import New Game Data</a>
+            </div>
         </div>
+
+
     </div>
 
 
