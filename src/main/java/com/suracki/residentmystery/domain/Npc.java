@@ -22,6 +22,8 @@ public class Npc {
 
     private boolean canWander;
 
+    private int wanderChance;
+
     @NotEmpty(message = "First interaction text is mandatory.")
     private String firstInteraction;
 
@@ -154,5 +156,13 @@ public class Npc {
 
     public void setEndName(String endName) {
         this.endName = endName;
+    }
+
+    public int getWanderChance() {
+        return wanderChance;
+    }
+
+    public void setWanderChance(int wanderChance) {
+        this.wanderChance = wanderChance;
     }
 }

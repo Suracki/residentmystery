@@ -8,6 +8,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class GameState {
 
@@ -243,5 +244,52 @@ public class GameState {
             }
         }
         return false;
+    }
+
+    public void moveWanderingNpcs() {
+        logger.info("moveWanderingNpcs called");
+        for (Npc npc : npcs) {
+            Random rand = new Random();
+            if (npc.isCanWander()) {
+                logger.info("Wandering NPC found: " + npc.getNpcName());
+                Room startLocation = findRoom(npc.getRoomName());
+                List<ExitMapping> exits = findExitMappingByRoomname(npc.getRoomName());
+                for (ExitMapping exit : exits) {
+                    Interactable door = findInteractable(exit.getExitName());
+                    if (!door.isLocked() && !door.isGameEnd()) {
+                        int random = rand.nextInt(100);
+                        if (random < npc.getWanderChance()) {
+                            logger.info("Random: " + random + ", NPC wandering...");
+
+                            List<ExitMapping> exitMappings = exits;
+                            List<String> exitsNames = new ArrayList<>();
+                            List<String> exitDirections = new ArrayList<>();
+                            for (ExitMapping mapping : exitMappings) {
+                                exitsNames.add(mapping.getExitName());
+                                exitDirections.add(mapping.getExitDirection());
+                            }
+
+                            String exitDirection = exitDirections.get(exitsNames.indexOf(exit.getExitName()));
+                            String roomName = "";
+                            List<ExitMapping> allExitMappings = getExitMappings();
+                            for (ExitMapping mapping : allExitMappings) {
+                                if (mapping.getExitName().equals(exit.getExitName()) && !mapping.getExitDirection().equals(exitDirection)) {
+                                    logger.info("NPC moving from " + npc.getRoomName() + " to " + mapping.getRoomName());
+                                    npc.setRoomName(mapping.getRoomName());
+                                }
+                            }
+
+                            return;
+
+                        }
+                        else {
+                            logger.info("Random: " + random + ", NPC not moving.");
+                        }
+                    }
+                }
+
+            }
+        }
+
     }
 }

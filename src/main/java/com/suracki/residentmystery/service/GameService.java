@@ -192,6 +192,7 @@ public class GameService {
         npc.setNpcDesc("A large dog.");
         npc.setRoomName("Dining Room");
         npc.setCanWander(true);
+        npc.setWanderChance(25);
         npc.setFirstInteraction("You aren't entirely sure how this dog got here. It has a package in it's mouth. It looks at you as if expecting a treat.");
         npc.setRepeatInteraction("The dog whines at you. It doesn't want to give up the package without something in return.");
         npc.setSolvingInteraction("You show the bone to the dog. It immediately drops the package and grabs the bone without a second thought.");
@@ -435,6 +436,8 @@ public class GameService {
         }
         gameState.logState();
 
+        gameState.moveWanderingNpcs();
+
         Interactable interactable = gameState.findInteractable(interactableName);
         Room room = gameState.findRoom(gameState.getCurrentRoom());
 
@@ -506,7 +509,7 @@ public class GameService {
         String name = auth.getName();
         User user = userRepository.findByUsername(name);
 
-        logger.info("GameService 'ending' called for user " + name + ", from object " + interactableName);
+        logger.info("GameService 'ending' called for user " + name + ", from object/npc " + interactableName);
 
         if (user == null) {
             logger.error("No user found in database with name: " + name);
@@ -522,9 +525,16 @@ public class GameService {
         }
         gameState.logState();
         Interactable interactable = gameState.findInteractableByName(interactableName);
+        Npc npc = gameState.findNpc(interactableName);
+        if (interactable == null ) {
+            model.addAttribute("endingName", gameState.findEndingByName(npc.getEndName()).getEndingName());
+            model.addAttribute("ending", gameState.findEndingByName(npc.getEndName()).getEndingText());
+        }
+        else {
+            model.addAttribute("endingName", gameState.findEndingByName(interactable.getEndName()).getEndingName());
+            model.addAttribute("ending", gameState.findEndingByName(interactable.getEndName()).getEndingText());
+        }
 
-        model.addAttribute("endingName", gameState.findEndingByName(interactable.getEndName()).getEndingName());
-        model.addAttribute("ending", gameState.findEndingByName(interactable.getEndName()).getEndingText());
         model.addAttribute("time", DurationFormatUtils.formatDuration(Duration.between(gameState.getStartTime(), LocalDateTime.now()).toMillis(), "**H:mm:ss**", true));
 
         return "game/ending";
@@ -590,6 +600,7 @@ public class GameService {
             logger.error("No gamestate found for name: " + name + ", restarting and creating new session.");
             return start(model);
         }
+        gameState.moveWanderingNpcs();
         gameState.logState();
 
         Loot loot = gameState.findLoot(lootName);
@@ -623,6 +634,7 @@ public class GameService {
             logger.error("No gamestate found for name: " + name + ", restarting and creating new session.");
             return start(model);
         }
+        gameState.moveWanderingNpcs();
         gameState.logState();
 
         Interactable interactable = gameState.findInteractable(exitKey);
