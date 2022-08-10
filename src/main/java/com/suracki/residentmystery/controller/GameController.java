@@ -63,5 +63,12 @@ public class GameController {
         return gameService.restart(model);
     }
 
+    @GetMapping("/game/speakWith")
+    public String speak(@RequestParam(value="npc") String npcName, Model model)
+    {
+        logger.info("User connected to /game/interactWith/ endpoint");
+        return gameService.speak(model, npcName);
+    }
+
 
 }

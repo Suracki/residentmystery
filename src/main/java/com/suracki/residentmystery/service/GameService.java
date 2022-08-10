@@ -253,6 +253,7 @@ public class GameService {
 
         gameState.setCurrentRoom(startingRoom.getRoomName());
         gameState.setCurrentLoot(new ArrayList<>());
+        gameState.setSpokenToNpcs(new ArrayList<>());
         gameState.logState();
 
         Room room = gameState.findRoom(gameState.getCurrentRoom());
@@ -697,6 +698,89 @@ public class GameService {
 
         gameState.setCurrentRoom(roomName);
         return continueGame(model);
+    }
+
+    public String speak(Model model, String npcName) {
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String name = auth.getName();
+        User user = userRepository.findByUsername(name);
+
+        logger.info("GameService 'speak' called for user " + name + ", npc " + npcName);
+
+        if (user == null) {
+            logger.error("No user found in database with name: " + name);
+            model.addAttribute("user","error");
+            return "index";
+        }
+
+        GameState gameState = gameStates.get(user.getUsername());
+        if (gameStates.get(user.getUsername())==null) {
+            //No GameState found for user. Need to restart the game.
+            logger.error("No gamestate found for name: " + name + ", restarting and creating new session.");
+            return start(model);
+        }
+        gameState.logState();
+
+        Npc npc = gameState.findNpc(npcName);
+        Room room = gameState.findRoom(gameState.getCurrentRoom());
+
+        if (gameState.hasSpokenTo(npcName)) {
+            model.addAttribute("repeatInter", npc.getRepeatInteraction());
+        }
+        else {
+            model.addAttribute("firstInter", npc.getFirstInteraction());
+        }
+
+        if (npc.isLocked()) {
+            logger.info("Npc " + npc.getNpcName() + " is locked.");
+            // need to unlock
+            if (gameState.hasLoot(npc.getKeyName())) {
+                logger.info("User has the key, unlocking!");
+                npc.setLocked(false);
+                model.addAttribute("lockstate", "unlocking");
+
+                if (!npc.getRewardLoot().equals("")) {
+                    logger.info("Solved npc provides loot! Redirecting to loot method.");
+                    model.addAttribute("npcName", npc.getNpcName());
+                    model.addAttribute("npcSolvedText", npc.getSolvingInteraction());
+                    return loot(model, npc.getRewardLoot());
+                }
+
+                if(npc.isGameEnd()) {
+                    logger.info("User has solved the game, forwarding to ending.");
+                    return ending(model, npcName);
+                }
+            }
+            else {
+                logger.info("User does not have the key!");
+                model.addAttribute("lockstate", "nokey");
+            }
+            model.addAttribute("npcName", npc.getNpcName());
+            model.addAttribute("npcDesc", npc.getNpcDesc());
+            model.addAttribute("npcSolvedText", npc.getSolvingInteraction());
+            model.addAttribute("npcAlreadySolvedText", npc.getAlreadySolvedInteraction());
+
+            model.addAttribute("roomName", room.getRoomName());
+
+        }
+        else {
+
+            logger.info("Npc " + npc.getNpcName() + " has already been unlocked.");
+
+            model.addAttribute("lockstate", "notlocked");
+
+            model.addAttribute("npcName", npc.getNpcName());
+            model.addAttribute("npcDesc", npc.getNpcDesc());
+            model.addAttribute("npcSolvedText", npc.getSolvingInteraction());
+            model.addAttribute("npcAlreadySolvedText", npc.getAlreadySolvedInteraction());
+
+            model.addAttribute("roomName", room.getRoomName());
+
+        }
+
+
+        return "game/speak";
     }
 
     private void roleCheck(Model model) {

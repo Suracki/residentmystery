@@ -19,6 +19,7 @@ public class GameState {
     private List<Ending> endings;
     private String currentRoom;
     private List<String> currentLoot;
+    private List<String> spokenToNpcs;
     private LocalDateTime startTime;
 
     private static final Logger logger = LogManager.getLogger(GameState.class);
@@ -216,5 +217,31 @@ public class GameState {
             }
         }
         return null;
+    }
+
+    public Npc findNpc(String npcName) {
+        for (Npc npc : npcs) {
+            if (npc.getNpcName().equals(npcName)) {
+                return npc;
+            }
+        }
+        return null;
+    }
+
+    public List<String> getSpokenToNpcs() {
+        return spokenToNpcs;
+    }
+
+    public void setSpokenToNpcs(List<String> spokenToNpcs) {
+        this.spokenToNpcs = spokenToNpcs;
+    }
+
+    public boolean hasSpokenTo(String npcName) {
+        for (String npc : spokenToNpcs) {
+            if (npc.equals(npcName)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

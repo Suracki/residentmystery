@@ -27,11 +27,18 @@
 
     <div class="container-content" id="content_flex_center">
         <div class="form-group">
+            <th:block th:if="${npcName != null}">
+                <h6> <th:block th:text="${npcName}"></th:block></h6>
+                <p><th:block th:text="${npcSolvedText}"></th:block></p><br>
+                <p>From <th:block th:text="${npcName}"></th:block> you receive a <th:block th:text="${lootName}"></th:block></p>
+            </th:block>
+
             <th:block th:if="${interactableName != null}">
                 <h6> You examine the <th:block th:text="${interactableName}"></th:block></h6>
                 <p><th:block th:text="${interactableSolvedText}"></th:block></p><br>
                 <p>Within the <th:block th:text="${interactableName}"></th:block> you find a <th:block th:text="${lootName}"></th:block></p>
             </th:block>
+
             <h6> You examine the <th:block th:text="${lootName}"></th:block></h6>
             <p>
             <p><th:block th:text="${lootDescription}"></th:block></p>
