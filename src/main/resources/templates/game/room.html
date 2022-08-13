@@ -30,6 +30,14 @@
             <h6> <th:block th:text="${roomName}"></th:block></h6>
             <p>
                 <p><th:block th:text="${roomDesc}"></th:block></p>
+            <p><th:block th:if="${not #lists.isEmpty(npcs)}">
+                <br>Characters present:
+                <th:block th:each="npc :  ${npcs}">
+                    <a th:href="@{/game/speakWith/?npc={npc}(npc=${npc.npcName})}"/>
+                    <br><td th:text="${npc.npcName}"></td>
+                    </a>
+                </th:block>
+            </th:block></p>
                 <p><th:block th:if="${not #lists.isEmpty(interactables)}">
                     <br>In the room you see:
                     <th:block th:each="interactable :  ${interactables}">

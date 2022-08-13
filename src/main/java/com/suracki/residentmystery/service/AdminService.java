@@ -26,6 +26,7 @@ public class AdminService {
     LootRepository lootRepository;
     ExitMappingRepository exitMappingRepository;
     EndingRepository endingRepository;
+    NpcRepository npcRepository;
 
     private Gson gson;
 
@@ -33,13 +34,15 @@ public class AdminService {
 
     public AdminService(UserRepository userRepository, RoomRepository roomRepository,
                        InteractableRepository interactableRepository, LootRepository lootRepository,
-                       ExitMappingRepository exitMappingRepository, EndingRepository endingRepository) {
+                       ExitMappingRepository exitMappingRepository, EndingRepository endingRepository,
+                        NpcRepository npcRepository) {
         this.userRepository = userRepository;
         this.roomRepository = roomRepository;
         this.interactableRepository = interactableRepository;
         this.lootRepository = lootRepository;
         this.exitMappingRepository = exitMappingRepository;
         this.endingRepository = endingRepository;
+        this.npcRepository = npcRepository;
         gson = new GsonBuilder().setLenient().setPrettyPrinting().create();
         logger.info("AdminService created");
 
@@ -55,6 +58,7 @@ public class AdminService {
         model.addAttribute("loots", lootRepository.findAll());
         model.addAttribute("exitMappings", exitMappingRepository.findAll());
         model.addAttribute("endings", endingRepository.findAll());
+        model.addAttribute("npcs", npcRepository.findAll());
 
         return "admin/manage";
     }
@@ -68,6 +72,7 @@ public class AdminService {
         List<Loot> loots = lootRepository.findAll();
         List<ExitMapping> exitMappings = exitMappingRepository.findAll();
         List<Ending> endings = endingRepository.findAll();
+        List<Npc> npcs = npcRepository.findAll();
 
         GameData gameData = new GameData();
         gameData.setRooms(rooms);
@@ -75,6 +80,7 @@ public class AdminService {
         gameData.setInteractables(interactables);
         gameData.setExitMappings(exitMappings);
         gameData.setEndings(endings);
+        gameData.setNpcs(npcs);
 
         String gameJson = gson.toJson(gameData);
         model.addAttribute("gameData", gameJson);
@@ -95,6 +101,7 @@ public class AdminService {
             List<Loot> loots = importedData.getLoots();
             List<ExitMapping> exitMappings = importedData.getExitMappings();
             List<Ending> endings = importedData.getEndings();
+            List<Npc> npcs = importedData.getNpcs();
 
             logger.info("JSON parsed successfully. Data found:");
             logger.info("Rooms: " + rooms.size());
@@ -102,36 +109,42 @@ public class AdminService {
             logger.info("Loots: " + loots.size());
             logger.info("Exit Mappings: " + exitMappings.size());
             logger.info("Endings: " + endings.size());
+            logger.info("Npcs: " + npcs.size());
 
             logger.info("Starting database: Rooms: " + roomRepository.findAll().size() +
                     " Interactables: " + interactableRepository.findAll().size() +
                     " Loots: " + lootRepository.findAll().size() +
                     " Exit Mappings: " + exitMappingRepository.findAll().size() +
-                    " Endings: " + endingRepository.findAll().size());
+                    " Endings: " + endingRepository.findAll().size() +
+                    " Npcs: " + npcRepository.findAll().size());
 
             roomRepository.deleteAll();
             interactableRepository.deleteAll();
             lootRepository.deleteAll();
             exitMappingRepository.deleteAll();
             endingRepository.deleteAll();
+            npcRepository.deleteAll();
 
             logger.info("Cleared database: Rooms: " + roomRepository.findAll().size() +
                     " Interactables: " + interactableRepository.findAll().size() +
                     " Loots: " + lootRepository.findAll().size() +
                     " Exit Mappings: " + exitMappingRepository.findAll().size() +
-                    " Endings: " + endingRepository.findAll().size());
+                    " Endings: " + endingRepository.findAll().size() +
+                    " Npcs: " + npcRepository.findAll().size());
 
             roomRepository.saveAll(rooms);
             interactableRepository.saveAll(interactables);
             lootRepository.saveAll(loots);
             exitMappingRepository.saveAll(exitMappings);
             endingRepository.saveAll(endings);
+            npcRepository.saveAll(npcs);
 
             logger.info("Updated database: Rooms: " + roomRepository.findAll().size() +
                     " Interactables: " + interactableRepository.findAll().size() +
                     " Loots: " + lootRepository.findAll().size() +
                     " Exit Mappings: " + exitMappingRepository.findAll().size() +
-                    " Endings: " + endingRepository.findAll().size());
+                    " Endings: " + endingRepository.findAll().size() +
+                    " Npcs: " + npcRepository.findAll().size());
 
             model.addAttribute("imported", "true");
             return "/admin/landing";
@@ -346,5 +359,47 @@ public class AdminService {
         ending.setId(id);
         endingRepository.save(ending);
         return manage(model, "ending");
+    }
+
+
+    public String addNpc(Model model, Npc npc) {
+        logger.info("AdminService 'addNpc' called.");
+        return "admin/gui/addNpc";
+    }
+
+    public String validateNpc(Model model, BindingResult result, Npc npc) {
+        logger.info("AdminService 'validateNpc' called.");
+        if (!result.hasErrors()) {
+            npcRepository.save(npc);
+            return manage(model, "npc");
+        }
+        return "admin/gui/addNpc";
+    }
+
+    public String deleteNpc(Integer id, Model model) {
+        npcRepository.deleteById(id);
+        return manage(model, "npc");
+    }
+
+    public String updateNpc(int id, Model model) {
+        try {
+            Npc npc = npcRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid id:" + id));
+            model.addAttribute("npc", npc);
+            return "admin/gui/editNpc";
+        }
+        catch (IllegalArgumentException e) {
+            model.addAttribute("edit","id_not_found");
+            return "/admin/landing";
+        }
+
+    }
+
+    public String updateNpc(int id, Npc npc, BindingResult result, Model model) {
+        if (result.hasErrors()) {
+            return "admin/gui/editNpc";
+        }
+        npc.setId(id);
+        npcRepository.save(npc);
+        return manage(model, "npc");
     }
 }

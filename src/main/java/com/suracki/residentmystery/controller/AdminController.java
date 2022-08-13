@@ -401,4 +401,64 @@ public class AdminController {
         }
         return adminService.updateEnding(id, ending, result, model);
     }
+
+    @GetMapping("/admin/addNpc")
+    public String addNpc(Model model, Npc npc)
+    {
+        logger.info("User connected to /admin/addNpc endpoint");
+        if (!roleCheck.RoleCheck("Admin")) {
+            logger.info("User is not an ADMIN, logging out and redirecting");
+            SecurityContextHolder.getContext().getAuthentication().setAuthenticated(false);
+            return "redirect:/";
+        }
+        return adminService.addNpc(model, npc);
+    }
+
+    @PostMapping("/admin/addNpc/validate")
+    public String addEndingNpc(Model model, @Valid Npc npc, BindingResult result)
+    {
+        logger.info("User connected to /admin/addNpc/validate endpoint");
+        if (!roleCheck.RoleCheck("Admin")) {
+            logger.info("User is not an ADMIN, logging out and redirecting");
+            SecurityContextHolder.getContext().getAuthentication().setAuthenticated(false);
+            return "redirect:/";
+        }
+        return adminService.validateNpc(model, result, npc);
+    }
+
+    @GetMapping("/admin/deleteNpc/{id}")
+    public String deleteNpc(@PathVariable("id") Integer id, Model model) {
+        logger.info("User connected to admin/deleteNpc endpoint for npc with id " + id);
+        if (!roleCheck.RoleCheck("Admin")) {
+            logger.info("User is not an ADMIN, logging out and redirecting");
+            SecurityContextHolder.getContext().getAuthentication().setAuthenticated(false);
+            return "redirect:/";
+        }
+        return adminService.deleteNpc(id, model);
+    }
+
+    @GetMapping("/admin/updateNpc/{id}")
+    public String updateNpc(@PathVariable("id") Integer id, Model model)
+    {
+        logger.info("User connected to admin/updateNpc endpoint for npc with id " + id);
+        if (!roleCheck.RoleCheck("Admin")) {
+            logger.info("User is not an ADMIN, logging out and redirecting");
+            SecurityContextHolder.getContext().getAuthentication().setAuthenticated(false);
+            return "redirect:/";
+        }
+        return adminService.updateNpc(id, model);
+    }
+
+    @PostMapping("/admin/updateNpc/{id}")
+    public String updateNpc(@PathVariable("id") Integer id, Model model,
+                               @Valid Npc npc, BindingResult result)
+    {
+        logger.info("User connected to admin/updateNpc POST endpoint for npc with id " + id);
+        if (!roleCheck.RoleCheck("Admin")) {
+            logger.info("User is not an ADMIN, logging out and redirecting");
+            SecurityContextHolder.getContext().getAuthentication().setAuthenticated(false);
+            return "redirect:/";
+        }
+        return adminService.updateNpc(id, npc, result, model);
+    }
 }

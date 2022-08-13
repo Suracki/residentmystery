@@ -1,21 +1,26 @@
 package com.suracki.residentmystery.domain.temporary;
 
-import com.suracki.residentmystery.domain.Interactable;
-import com.suracki.residentmystery.domain.Loot;
-import com.suracki.residentmystery.domain.Room;
+import com.suracki.residentmystery.domain.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class GameState {
 
     private List<Room> rooms;
     private List<Loot> loots;
     private List<Interactable> interactables;
+    private List<Npc> npcs;
+    private List<ExitMapping> exitMappings;
+    private List<Ending> endings;
     private String currentRoom;
     private List<String> currentLoot;
+    private List<String> spokenToNpcs;
     private LocalDateTime startTime;
 
     private static final Logger logger = LogManager.getLogger(GameState.class);
@@ -25,6 +30,7 @@ public class GameState {
         logger.info(rooms.size() + " rooms.");
         logger.info(loots.size() + " loots.");
         logger.info(interactables.size() + " interactables.");
+        logger.info(npcs.size() + " npcs.");
         logger.info(currentRoom + " as current room.");
         logger.info(currentLoot + " as current loot.");
     }
@@ -119,5 +125,175 @@ public class GameState {
 
     public void setStartTime(LocalDateTime startTime) {
         this.startTime = startTime;
+    }
+
+    public List<Npc> getNpcs() {
+        return npcs;
+    }
+
+    public void setNpcs(List<Npc> npcs) {
+        this.npcs = npcs;
+    }
+
+    public Room findStartingRoom() {
+        for (Room room : rooms) {
+            if (room.isStartRoom()) {
+                return room;
+            }
+        }
+        return rooms.get(0);
+    }
+
+    public List<ExitMapping> getExitMappings() {
+        return exitMappings;
+    }
+
+    public void setExitMappings(List<ExitMapping> exitMappings) {
+        this.exitMappings = exitMappings;
+    }
+
+    public List<ExitMapping> findExitMappingByRoomname(String roomName) {
+        List<ExitMapping> roomExits = new ArrayList<>();
+        for (ExitMapping exitMapping : exitMappings) {
+            if (exitMapping.getRoomName().equals(roomName)) {
+                roomExits.add(exitMapping);
+            }
+        }
+        return roomExits;
+    }
+
+    public List<Loot> findLootByRoomname(String roomName) {
+        List<Loot> roomLoot = new ArrayList<>();
+        for (Loot loot : loots) {
+            if (loot.getRoomName() != null ) {
+                if (loot.getRoomName().equals(roomName)) {
+                    roomLoot.add(loot);
+                }
+            }
+        }
+        return roomLoot;
+    }
+
+    public List<Interactable> findInteractablesByRoomname(String roomName) {
+        List<Interactable> roomInters = new ArrayList<>();
+        for (Interactable interactable : interactables) {
+            if (interactable.getRoomName().equals(roomName)) {
+                roomInters.add(interactable);
+            }
+        }
+        return roomInters;
+    }
+
+    public List<Npc> findNpcsByRoomname(String roomName) {
+        List<Npc> roomNpcs = new ArrayList<>();
+        for (Npc npc : npcs) {
+            if (npc.getRoomName().equals(roomName)) {
+                roomNpcs.add(npc);
+            }
+        }
+        return roomNpcs;
+    }
+
+    public Interactable findInteractableByName(String interactableName) {
+        for (Interactable interactable : interactables) {
+            if (interactable.getInteractableName().equals(interactableName)) {
+                return interactable;
+            }
+        }
+        return null;
+    }
+
+    public List<Ending> getEndings() {
+        return endings;
+    }
+
+    public void setEndings(List<Ending> endings) {
+        this.endings = endings;
+    }
+
+    public Ending findEndingByName(String endingName) {
+        for (Ending ending : endings) {
+            if (ending.getEndingName().equals(endingName)) {
+                return ending;
+            }
+        }
+        return null;
+    }
+
+    public Npc findNpc(String npcName) {
+        for (Npc npc : npcs) {
+            if (npc.getNpcName().equals(npcName)) {
+                return npc;
+            }
+        }
+        return null;
+    }
+
+    public List<String> getSpokenToNpcs() {
+        return spokenToNpcs;
+    }
+
+    public void setSpokenToNpcs(List<String> spokenToNpcs) {
+        this.spokenToNpcs = spokenToNpcs;
+    }
+
+    public void addSpokenToNpc(String npcName) {
+        spokenToNpcs.add(npcName);
+    }
+
+    public boolean hasSpokenTo(String npcName) {
+        for (String npc : spokenToNpcs) {
+            if (npc.equals(npcName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void moveWanderingNpcs() {
+        logger.info("moveWanderingNpcs called");
+        for (Npc npc : npcs) {
+            Random rand = new Random();
+            if (npc.isCanWander()) {
+                logger.info("Wandering NPC found: " + npc.getNpcName());
+                Room startLocation = findRoom(npc.getRoomName());
+                List<ExitMapping> exits = findExitMappingByRoomname(npc.getRoomName());
+                for (ExitMapping exit : exits) {
+                    Interactable door = findInteractable(exit.getExitName());
+                    if (!door.isLocked() && !door.isGameEnd()) {
+                        int random = rand.nextInt(100);
+                        if (random < npc.getWanderChance()) {
+                            logger.info("Random: " + random + ", NPC wandering...");
+
+                            List<ExitMapping> exitMappings = exits;
+                            List<String> exitsNames = new ArrayList<>();
+                            List<String> exitDirections = new ArrayList<>();
+                            for (ExitMapping mapping : exitMappings) {
+                                exitsNames.add(mapping.getExitName());
+                                exitDirections.add(mapping.getExitDirection());
+                            }
+
+                            String exitDirection = exitDirections.get(exitsNames.indexOf(exit.getExitName()));
+                            String roomName = "";
+                            List<ExitMapping> allExitMappings = getExitMappings();
+                            for (ExitMapping mapping : allExitMappings) {
+                                if (mapping.getExitName().equals(exit.getExitName()) && !mapping.getExitDirection().equals(exitDirection)) {
+                                    logger.info("NPC moving from " + npc.getRoomName() + " to " + mapping.getRoomName());
+                                    npc.setRoomName(mapping.getRoomName());
+                                }
+                            }
+
+                            return;
+
+                        }
+                        else {
+                            logger.info("Random: " + random + ", NPC not moving.");
+                        }
+                    }
+                }
+
+            }
+        }
+
     }
 }
