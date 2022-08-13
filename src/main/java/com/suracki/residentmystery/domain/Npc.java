@@ -42,6 +42,8 @@ public class Npc {
 
     private String keyName;
 
+    private boolean consumeKey;
+
     private boolean gameEnd;
 
     private String endName;
@@ -164,5 +166,17 @@ public class Npc {
 
     public void setWanderChance(int wanderChance) {
         this.wanderChance = wanderChance;
+    }
+
+    public boolean doesConsumeKey() {
+        return consumeKey;
+    }
+
+    public void setConsumeKey(boolean consumeKey) {
+        this.consumeKey = consumeKey;
+    }
+
+    public boolean isConsumeKey() {
+        return consumeKey;
     }
 }

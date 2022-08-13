@@ -163,6 +163,32 @@
                     </tbody>
                 </table>
             </th:block>
+            <th:block th:if="${type == 'all' or type == 'npc'}">
+                <h6>Npcs</h6>
+                <div class="form-group">
+                    <a href="/admin/addNpc" class="btn btn-primary btn-sm">Add New</a>
+                    <a href="/admin/filter?type=npc" class="btn btn-primary btn-sm">Filter</a>
+                </div>
+                <table class="table table-bordered">
+                    <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Npc Name</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="npc : ${npcs}">
+                        <td style="width: 10%" th:text="${npc.id}"></td>
+                        <td th:text="${npc.npcName}"></td>
+                        <td style="width: 15%" class="text-center">
+                            <a th:href="@{/admin/updateNpc/{id}(id=${npc.id})}">Edit</a>&nbsp;|&nbsp;
+                            <a th:href="@{/admin/deleteNpc/{id}(id=${npc.id})}">Delete</a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </th:block>
 
             <div class="alert alert-dark" role="alert">
                 <a th:href="@{/admin/export}"/>Export Current Game Data</a>

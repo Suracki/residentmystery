@@ -69,6 +69,12 @@
                 </div>
             </div>
             <div class="form-group">
+                <label for="consumeKey" class="col-sm-2 control-label">Consumes Key?</label>
+                <div class="col-sm-10">
+                    <input type="checkbox" th:field="*{consumeKey}" id="consumeKey" value="no">
+                </div>
+            </div>
+            <div class="form-group">
                 <label for="roomName" class="col-sm-2 control-label">Location (Room Name)</label>
                 <div class="col-sm-10">
                     <input type="text" th:field="*{roomName}" id="roomName" placeholder="roomName" class="col-4">

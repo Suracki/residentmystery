@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title> Resident Mystery </title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" >
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css}">
+</head>
+<body>
+<div class="container-collector" id="main">
+    <div class="container-content" id="content_flex_top_collector">
+        <div class="col-6">
+
+        </div>
+
+        <div class="col-6 text-right">
+            Logged in user: <b th:inline="text"  class="user"> [[${#httpServletRequest.remoteUser}]] </b>
+            <form th:action="@{/app-logout}" method="POST" name="logoutForm">
+                <input type="submit" value="Logout"/>
+            </form>
+        </div>
+    </div>
+
+
+
+
+    <div class="container-content" id="content_flex_center">
+        <form action="#" th:action="@{/admin/updateNpc/{id}(id=${npc.id})}" th:object="${npc}" method="post" class="form-horizontal" style="width: 100%">
+            <div class="form-group">
+                <label for="npcName" class="col-sm-2 control-label">Name</label>
+                <div class="col-sm-10">
+                    <input type="text" th:field="*{npcName}" id="npcName" placeholder="npcName" class="col-4">
+                    <p class="text-danger" th:if="${#fields.hasErrors('npcName')}" th:errors="*{npcName}"></p>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="npcDesc" class="col-sm-2 control-label">Description</label>
+                <div class="col-sm-10">
+                    <textarea class="form-control" id="npcDesc" rows="20" th:field="*{npcDesc}"></textarea>
+                    <p class="text-danger" th:if="${#fields.hasErrors('npcDesc')}" th:errors="*{npcDesc}"></p>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="roomName" class="col-sm-2 control-label">Location (Room Name)</label>
+                <div class="col-sm-10">
+                    <input type="text" th:field="*{roomName}" id="roomName" placeholder="roomName" class="col-4">
+                    <p class="text-danger" th:if="${#fields.hasErrors('roomName')}" th:errors="*{roomName}"></p>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="canWander" class="col-sm-2 control-label">Can Wander?</label>
+                <div class="col-sm-10">
+                    <input type="checkbox" th:field="*{canWander}" id="canWander" value="${canWander}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="wanderChance" class="col-sm-2 control-label">Chance to wander (0-100)</label>
+                <div class="col-sm-10">
+                    <input type="text" th:field="*{wanderChance}" id="wanderChance" placeholder="wanderChance" class="col-4">
+                    <p class="text-danger" th:if="${#fields.hasErrors('wanderChance')}" th:errors="*{wanderChance}"></p>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="firstInteraction" class="col-sm-2 control-label">First Interaction</label>
+                <div class="col-sm-10">
+                    <textarea class="form-control" id="firstInteraction" rows="5" th:field="*{firstInteraction}"></textarea>
+                    <p class="text-danger" th:if="${#fields.hasErrors('firstInteraction')}" th:errors="*{firstInteraction}"></p>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="repeatInteraction" class="col-sm-2 control-label">Repeat Interaction</label>
+                <div class="col-sm-10">
+                    <textarea class="form-control" id="repeatInteraction" rows="5" th:field="*{repeatInteraction}"></textarea>
+                    <p class="text-danger" th:if="${#fields.hasErrors('repeatInteraction')}" th:errors="*{repeatInteraction}"></p>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="solvingInteraction" class="col-sm-2 control-label">Solving Interaction</label>
+                <div class="col-sm-10">
+                    <textarea class="form-control" id="solvingInteraction" rows="5" th:field="*{solvingInteraction}"></textarea>
+                    <p class="text-danger" th:if="${#fields.hasErrors('solvingInteraction')}" th:errors="*{solvingInteraction}"></p>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="alreadySolvedInteraction" class="col-sm-2 control-label">Already Solved Interaction</label>
+                <div class="col-sm-10">
+                    <textarea class="form-control" id="alreadySolvedInteraction" rows="5" th:field="*{alreadySolvedInteraction}"></textarea>
+                    <p class="text-danger" th:if="${#fields.hasErrors('alreadySolvedInteraction')}" th:errors="*{alreadySolvedInteraction}"></p>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="rewardLoot" class="col-sm-2 control-label">Reward (Loot Name)</label>
+                <div class="col-sm-10">
+                    <input type="text" th:field="*{rewardLoot}" id="rewardLoot" placeholder="rewardLoot" class="col-4">
+                    <p class="text-danger" th:if="${#fields.hasErrors('rewardLoot')}" th:errors="*{rewardLoot}"></p>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="locked" class="col-sm-2 control-label">Has Quest/Locked?</label>
+                <div class="col-sm-10">
+                    <input type="checkbox" th:field="*{locked}" id="locked" value="${locked}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="keyName" class="col-sm-2 control-label">Quest/Key Item (Loot Name)</label>
+                <div class="col-sm-10">
+                    <input type="text" th:field="*{keyName}" id="keyName" placeholder="keyName" class="col-4">
+                    <p class="text-danger" th:if="${#fields.hasErrors('rewardLoot')}" th:errors="*{keyName}"></p>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="consumeKey" class="col-sm-2 control-label">Consumes Key?</label>
+                <div class="col-sm-10">
+                    <input type="checkbox" th:field="*{consumeKey}" id="consumeKey" value="${consumeKey}" th:checked="${consumeKey}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="gameEnd" class="col-sm-2 control-label">End Game When Solved?</label>
+                <div class="col-sm-10">
+                    <input type="checkbox" th:field="*{gameEnd}" id="gameEnd" value="${gameEnd}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="endName" class="col-sm-2 control-label">Ending Name</label>
+                <div class="col-sm-10">
+                    <input type="text" th:field="*{endName}" id="endName" placeholder="endName" class="col-4">
+                    <p class="text-danger" th:if="${#fields.hasErrors('endName')}" th:errors="*{endName}"></p>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <input type="hidden" th:field="*{id}">
+                    <a class="btn btn-danger btn-sm" href="/admin/manage">Cancel</a>
+                    <input class="btn btn-primary btn-sm" type="submit" value="Update Npc">
+                </div>
+            </div>
+
+        </form>
+    </div>
+
+    <div id="btmL">
+        <h2>Find me on social media</h2>
+        <h3><strong>A new project idea?</strong> Contact me!</h3>
+        <a href="https://twitter.com/Suracki" class="fa fa-twitter"></a>
+        <a href="https://github.com/Suracki" class="fa fa-github"></a>
+        <a href="https://www.linkedin.com/in/simon-linford/" class="fa fa-linkedin"></a>
+    </div>
+    <div id="btmR"></div>
+
+</div>
+</body>
+</html>

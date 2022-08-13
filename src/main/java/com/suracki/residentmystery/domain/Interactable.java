@@ -29,6 +29,8 @@ public class Interactable {
 
     private boolean locked;
 
+    private boolean consumeKey;
+
     private boolean gameEnd;
 
     private String endName;
@@ -145,5 +147,17 @@ public class Interactable {
 
     public void setEndName(String endName) {
         this.endName = endName;
+    }
+
+    public boolean doesConsumeKey() {
+        return consumeKey;
+    }
+
+    public void setConsumeKey(boolean consumeKey) {
+        this.consumeKey = consumeKey;
+    }
+
+    public boolean isConsumeKey() {
+        return consumeKey;
     }
 }

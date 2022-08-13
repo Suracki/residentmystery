@@ -237,6 +237,10 @@ public class GameState {
         this.spokenToNpcs = spokenToNpcs;
     }
 
+    public void addSpokenToNpc(String npcName) {
+        spokenToNpcs.add(npcName);
+    }
+
     public boolean hasSpokenTo(String npcName) {
         for (String npc : spokenToNpcs) {
             if (npc.equals(npcName)) {

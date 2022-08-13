@@ -11,6 +11,7 @@ public class GameData {
     List<Loot> loots;
     List<ExitMapping> exitMappings;
     List<Ending> endings;
+    List<Npc> npcs;
 
     public List<Room> getRooms() {
         return rooms;
@@ -50,5 +51,13 @@ public class GameData {
 
     public void setEndings(List<Ending> endings) {
         this.endings = endings;
+    }
+
+    public List<Npc> getNpcs() {
+        return npcs;
+    }
+
+    public void setNpcs(List<Npc> npcs) {
+        this.npcs = npcs;
     }
 }

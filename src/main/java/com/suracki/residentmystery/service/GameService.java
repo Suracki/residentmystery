@@ -95,6 +95,7 @@ public class GameService {
         redDoor.setInteractableDesc("A large ornate door, with a red gem in the handle.");
         redDoor.setLocked(true);
         redDoor.setKeyName("Red Key");
+        redDoor.setConsumeKey(false);
         redDoor.setSolvedText("The door is now unlocked and can be used.");
         redDoor.setAlreadySolvedText("You have already unlocked this door.");
         redDoor.setRoomName("Entrance Hall");
@@ -105,6 +106,7 @@ public class GameService {
         mainDoor.setInteractableDesc("The mansion's front door. Large and imposing. The only barrier to your freedom...");
         mainDoor.setLocked(true);
         mainDoor.setKeyName("");
+        mainDoor.setConsumeKey(false);
         mainDoor.setSolvedText("");
         mainDoor.setAlreadySolvedText("The door appears to have been unlocked by some hidden mechanism.");
         mainDoor.setRoomName("Entrance Hall");
@@ -115,6 +117,7 @@ public class GameService {
         statue.setInteractableDesc("A life size statue of a person, with an outstretched hand. The ring finger is conspicuously bare.");
         statue.setLocked(true);
         statue.setKeyName("Ring");
+        statue.setConsumeKey(true);
         statue.setSolvedText("The ring fits the statue perfectly, and once placed there is a satisfying click sound. The main door opens are you are free again... for now.");
         statue.setAlreadySolvedText("You have already placed the Ring on the statue's finger. There is nothing else to do here.");
         statue.setRoomName("Entrance Hall");
@@ -125,7 +128,8 @@ public class GameService {
         chest.setInteractableName("Chest");
         chest.setInteractableDesc("A large wooden chest");
         chest.setLocked(true);
-        chest.setKeyName("Red Key");
+        chest.setKeyName("Gold Key");
+        chest.setConsumeKey(false);
         chest.setSolvedText("Your key fits the lock without any trouble, and you unlock the chest.");
         chest.setAlreadySolvedText("The unlocked chest is empty.");
         chest.setRoomName("Outside");
@@ -137,6 +141,7 @@ public class GameService {
         escape.setInteractableDesc("The way out. A large door, with a small round indendation.");
         escape.setLocked(true);
         escape.setKeyName("Medal");
+        escape.setConsumeKey(true);
         escape.setSolvedText("You place the medal in the indentation, and the door opens.");
         escape.setAlreadySolvedText("The door is open.");
         escape.setRoomName("Outside");
@@ -200,6 +205,7 @@ public class GameService {
         npc.setRewardLoot("Medal");
         npc.setLocked(true);
         npc.setKeyName("Bone");
+        npc.setConsumeKey(true);
         npc.setGameEnd(false);
         npc.setEndName("");
         npcRepository.save(npc);
@@ -258,8 +264,32 @@ public class GameService {
         gameState.logState();
 
         Room room = gameState.findRoom(gameState.getCurrentRoom());
+        List<Interactable> roomInteractables = gameState.findInteractablesByRoomname(startingRoom.getRoomName());
         List<ExitMapping> exitMappings = gameState.findExitMappingByRoomname(startingRoom.getRoomName());
         logger.info("Exit mappings found for room: " + exitMappings.size());
+
+        List<Interactable> removeInter = new ArrayList<>();
+        List<ExitMapping> removeExit = new ArrayList<>();
+
+        for (ExitMapping exitMapping : exitMappings) {
+            for (Interactable interactable : roomInteractables) {
+                if (exitMapping.getExitName().equals(interactable.getInteractableName())) {
+                    if (interactable.isLocked()) {
+                        removeExit.add(exitMapping);
+                    }
+                    else {
+                        removeInter.add(interactable);
+                    }
+                 }
+            }
+        }
+        if (removeInter.size() != 0) {
+            removeInter.forEach(inter -> roomInteractables.remove(inter));
+        }
+        if (removeExit.size() != 0) {
+            removeExit.forEach(ext -> exitMappings.remove(ext));
+        }
+        logger.info("Unlocked exit mappings for room: " + exitMappings.size());
 
         if (exitMappings == null || exitMappings.size()==0) {
             model.addAttribute("exits", new ArrayList<>());
@@ -302,7 +332,7 @@ public class GameService {
 
         model.addAttribute("roomName", startingRoom.getRoomName());
         model.addAttribute("roomDesc", startingRoom.getRoomDesc());
-        model.addAttribute("interactables", gameState.findInteractablesByRoomname(startingRoom.getRoomName()));
+        model.addAttribute("interactables", roomInteractables);
         model.addAttribute("npcs", gameState.findNpcsByRoomname(startingRoom.getRoomName()));
         model.addAttribute("loots", loots);
 
@@ -361,8 +391,32 @@ public class GameService {
         gameState.logState();
 
         Room room = gameState.findRoom(gameState.getCurrentRoom());
+        List<Interactable> roomInteractables = gameState.findInteractablesByRoomname(room.getRoomName());
         List<ExitMapping> exitMappings = gameState.findExitMappingByRoomname(room.getRoomName());
         logger.info("Exit mappings found for room: " + exitMappings.size());
+
+        List<Interactable> removeInter = new ArrayList<>();
+        List<ExitMapping> removeExit = new ArrayList<>();
+
+        for (ExitMapping exitMapping : exitMappings) {
+            for (Interactable interactable : roomInteractables) {
+                if (exitMapping.getExitName().equals(interactable.getInteractableName())) {
+                    if (interactable.isLocked()) {
+                        removeExit.add(exitMapping);
+                    }
+                    else {
+                        removeInter.add(interactable);
+                    }
+                }
+            }
+        }
+        if (removeInter.size() != 0) {
+            removeInter.forEach(inter -> roomInteractables.remove(inter));
+        }
+        if (removeExit.size() != 0) {
+            removeExit.forEach(ext -> exitMappings.remove(ext));
+        }
+        logger.info("Unlocked exit mappings for room: " + exitMappings.size());
 
         if (exitMappings == null || exitMappings.size()==0) {
             model.addAttribute("exits", new ArrayList<>());
@@ -404,7 +458,7 @@ public class GameService {
 
         model.addAttribute("roomName", room.getRoomName());
         model.addAttribute("roomDesc", room.getRoomDesc());
-        model.addAttribute("interactables", gameState.findInteractablesByRoomname(room.getRoomName()));
+        model.addAttribute("interactables", roomInteractables);
         model.addAttribute("npcs", gameState.findNpcsByRoomname(room.getRoomName()));
         model.addAttribute("loots", loots);
         model.addAttribute("inventory", inventory);
@@ -447,6 +501,10 @@ public class GameService {
             if (gameState.hasLoot(interactable.getKeyName())) {
                 logger.info("User has the key, unlocking!");
                 interactable.setLocked(false);
+                if (interactable.doesConsumeKey()) {
+                    logger.info("Interactable consumes key: " + interactable.getKeyName());
+                    gameState.removeLoot(interactable.getKeyName());
+                }
                 model.addAttribute("lockstate", "unlocking");
 
                 if (!interactable.getTarget().equals("")){
@@ -570,6 +628,8 @@ public class GameService {
         Room room = gameState.findRoom(gameState.getCurrentRoom());
 
         gameState.addLoot(lootName);
+        loot.setRoomName("");
+
         logger.info("Item " + lootName + " from " + room.getRoomName() + " added to inventory.");
 
         model.addAttribute("lootName", loot.getLootName());
@@ -741,6 +801,7 @@ public class GameService {
             model.addAttribute("repeatInter", npc.getRepeatInteraction());
         }
         else {
+            gameState.addSpokenToNpc(npcName);
             model.addAttribute("firstInter", npc.getFirstInteraction());
         }
 
@@ -750,6 +811,10 @@ public class GameService {
             if (gameState.hasLoot(npc.getKeyName())) {
                 logger.info("User has the key, unlocking!");
                 npc.setLocked(false);
+                if (npc.doesConsumeKey()) {
+                    logger.info("Npc consumes key: " + npc.getKeyName());
+                    gameState.removeLoot(npc.getKeyName());
+                }
                 model.addAttribute("lockstate", "unlocking");
 
                 if (!npc.getRewardLoot().equals("")) {
