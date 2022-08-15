@@ -26,6 +26,7 @@
     </li>
     <li><a href="#getting-started">Getting Started</a></li>
     <li><a href="#usage">Usage</a></li>
+    <li><a href="#game-elements">Game Element Documentation</a></li>
     <li><a href="#contact">Contact</a></li>
   </ol>
 </details>
@@ -88,8 +89,6 @@ The application interfaces with a MySQL database to store game data, and serves 
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
-
-
 <!-- USAGE EXAMPLES -->
 ## Usage
 
@@ -109,6 +108,37 @@ Example gameplay screen; exploring a room. The room's description and contents a
 
 <img src="readme/management.png" alt="management">
 Example game management screen. Lists objects currently in game data, can be filtered by object type/<br><br>
+
+<p align="right">(<a href="#top">back to top</a>)</p>
+
+<!-- GAME ELEMENTS -->
+## Game Elements
+
+The following game elements are present:<br><br>
+Rooms<br>
+Rooms are the areas that the player will explore. They can contain other objects.<br>
+They are connected together via ExitMappings<br><br>
+ExitMapping<br>
+ExitMappings are what is used to allow navigation. They contain a room name, an exit (interactable) name, and a direction.
+Interactable<br>
+Interactables are any stationary object in a room that can be interacted with.<br>
+They can be locked, requiring a key item to be provided.<br>
+Upon unlocking they can provide another item in return, unlock another interactable, or end the game.<br>
+Interactables can be used as exits in ExitMappings, and this also allows exits to be locked.<br>
+Locked exits can be unlocked either by key item, or by being unlocked via another Interactable being solved.<br><br>
+Loot<br>
+Loots are objects which can be picked up by the player.<br>
+They can be placed in rooms and directly looted, or can be rewarded from unlocking Interactables or NPCs.<br>
+They can be used as Keys for Interactables or NPCs.<br><br>
+NPC<br>
+NPCs are objects representing non player characters.<br>
+They are placed in a room to start, but can be set to wander. If they are allowed to wander, they will move randomly through any unlocked ExitMappings.<br>
+NPCs can be 'locked', allowing quests to be implemented.<br>
+Upon unlocking/completing, they can provide a Loot reward, or can end the game.<br>
+Ending<br>
+Endings are used to store the text for ending the game.<br>
+There can be multiple endings, and different Interactables/NPCs can point to different endings.<br>
+
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
