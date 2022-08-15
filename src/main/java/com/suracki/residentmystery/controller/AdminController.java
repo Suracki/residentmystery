@@ -55,7 +55,7 @@ public class AdminController {
             SecurityContextHolder.getContext().getAuthentication().setAuthenticated(false);
             return "redirect:/";
         }
-        return "/admin/landing";
+        return "admin/landing";
     }
 
     /**

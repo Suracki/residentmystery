@@ -82,7 +82,7 @@ public class AdminService {
         String gameJson = gson.toJson(gameData);
         model.addAttribute("gameData", gameJson);
 
-        return "/admin/export";
+        return "admin/export";
     }
 
     public String importData(Model model, GameDao gameDao) {
@@ -144,12 +144,12 @@ public class AdminService {
                     " Npcs: " + npcRepository.findAll().size());
 
             model.addAttribute("imported", "true");
-            return "/admin/landing";
+            return "admin/landing";
         }
         catch (Exception e) {
             logger.error("GSON failed to parse JSON string: " + gameDao.getJson());
             model.addAttribute("imported", "gson_fail");
-            return "/admin/landing";
+            return "admin/landing";
         }
     }
 
@@ -180,7 +180,7 @@ public class AdminService {
         }
         catch (IllegalArgumentException e) {
             model.addAttribute("edit","id_not_found");
-            return "/admin/landing";
+            return "admin/landing";
         }
 
     }
@@ -221,7 +221,7 @@ public class AdminService {
         }
         catch (IllegalArgumentException e) {
             model.addAttribute("edit","id_not_found");
-            return "/admin/landing";
+            return "admin/landing";
         }
 
     }
@@ -262,7 +262,7 @@ public class AdminService {
         }
         catch (IllegalArgumentException e) {
             model.addAttribute("edit","id_not_found");
-            return "/admin/landing";
+            return "admin/landing";
         }
 
     }
@@ -303,7 +303,7 @@ public class AdminService {
         }
         catch (IllegalArgumentException e) {
             model.addAttribute("edit","id_not_found");
-            return "/admin/landing";
+            return "admin/landing";
         }
 
     }
@@ -344,7 +344,7 @@ public class AdminService {
         }
         catch (IllegalArgumentException e) {
             model.addAttribute("edit","id_not_found");
-            return "/admin/landing";
+            return "admin/landing";
         }
 
     }
@@ -386,7 +386,7 @@ public class AdminService {
         }
         catch (IllegalArgumentException e) {
             model.addAttribute("edit","id_not_found");
-            return "/admin/landing";
+            return "admin/landing";
         }
 
     }

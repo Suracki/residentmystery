@@ -129,7 +129,8 @@ public class UserService {
         }
         catch (Exception e) {
             logger.error("Error generating & sending new password: " + e);
-            return "/error";
+            model.addAttribute("user","generic_error");
+            return "index";
         }
     }
 
