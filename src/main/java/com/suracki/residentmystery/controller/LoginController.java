@@ -15,6 +15,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.validation.Valid;
 
+/**
+ *
+ * LoginController
+ *
+ * Provides endpoints for user account creation & login
+ *
+ */
 @Controller
 public class LoginController {
 
@@ -22,6 +29,14 @@ public class LoginController {
     @Autowired
     private UserService userService;
 
+    /**
+     * Mapping for GET
+     *
+     * Serves register new user page
+     *
+     * @param model Model
+     * @return register user form
+     */
     @GetMapping("/login/register")
     public String register(Model model, User user)
     {
@@ -29,6 +44,18 @@ public class LoginController {
         return userService.addUser(model, user);
     }
 
+    /**
+     * Mapping for POST
+     *
+     * Attempts to create a user from form data
+     *
+     * If unsuccessful due to errors, will return to form
+     * If unscucessful due to user already existing, will prompt to reset password
+     *
+     * @param model Model
+     * @param user object to user data
+     * @return result page
+     */
     @PostMapping("/login/register/validate")
     public String validate(@Valid User user, BindingResult result, Model model)
     {
@@ -36,6 +63,14 @@ public class LoginController {
         return userService.validate(user, result, model);
     }
 
+    /**
+     * Mapping for GET
+     *
+     * Serves reset password page
+     *
+     * @param model Model
+     * @return reset password form
+     */
     @GetMapping("/login/resetForm")
     public String resetPasswordForm(User user, Model model)
     {
@@ -43,6 +78,15 @@ public class LoginController {
         return "login/reset";
     }
 
+    /**
+     * Mapping for POST
+     *
+     * Attempts to reset a user's password via email
+     *
+     * @param model Model
+     * @param user object to user data
+     * @return result page
+     */
     @PostMapping("/login/reset/validate")
     public String resetPasswordValidate(User user, Model model)
     {
@@ -50,6 +94,14 @@ public class LoginController {
         return userService.resetPasswordValidate(user, model);
     }
 
+    /**
+     * Mapping for GET
+     *
+     * Serves reset password page
+     *
+     * @param model Model
+     * @return reset password form
+     */
     @GetMapping("/login/reset")
     public String resetPassword(Model model, @RequestParam(value="user") String user)
     {
