@@ -5,7 +5,6 @@ import com.google.gson.GsonBuilder;
 import com.suracki.residentmystery.domain.*;
 import com.suracki.residentmystery.domain.temporary.GameDao;
 import com.suracki.residentmystery.domain.temporary.GameData;
-import com.suracki.residentmystery.domain.temporary.GameState;
 import com.suracki.residentmystery.repository.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -13,8 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
 
 @Service

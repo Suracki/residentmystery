@@ -10,6 +10,13 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 import java.util.Properties;
 
+/**
+ *
+ * MailClient
+ *
+ * Used by UserService to send password reset emails
+ *
+ */
 public class MailClient {
 
     private static final Logger logger = LogManager.getLogger(MailClient.class);

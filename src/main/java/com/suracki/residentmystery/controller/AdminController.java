@@ -2,7 +2,6 @@ package com.suracki.residentmystery.controller;
 
 import com.suracki.residentmystery.domain.*;
 import com.suracki.residentmystery.domain.temporary.GameDao;
-import com.suracki.residentmystery.domain.temporary.GameData;
 import com.suracki.residentmystery.security.RoleCheck;
 import com.suracki.residentmystery.service.AdminService;
 import org.apache.logging.log4j.LogManager;
@@ -19,6 +18,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.validation.Valid;
 
+/**
+ *
+ * AdminController
+ *
+ * Provides endpoints for administration services
+ *
+ * Allows for management of game data; mass import/export, and add/edit/remove for individual elements
+ *
+ */
 @Controller
 public class AdminController {
 
@@ -30,6 +38,14 @@ public class AdminController {
     @Autowired
     private RoleCheck roleCheck;
 
+    /**
+     * Mapping for GET
+     *
+     * Serves Admin landing/home page
+     *
+     * @param model Model
+     * @return landing page template
+     */
     @GetMapping("/admin/landing")
     public String start(Model model)
     {
@@ -42,6 +58,14 @@ public class AdminController {
         return "/admin/landing";
     }
 
+    /**
+     * Mapping for GET
+     *
+     * Serves page to manage game entities
+     *
+     * @param model Model
+     * @return manage entities page with full set of entities stored in Model
+     */
     @GetMapping("/admin/manage")
     public String manage(Model model)
     {
@@ -54,6 +78,14 @@ public class AdminController {
         return adminService.manage(model, "all");
     }
 
+    /**
+     * Mapping for GET
+     *
+     * Serves page to manage game entities of a specific type
+     *
+     * @param model Model
+     * @return manage entities page with select set of entities stored in Model
+     */
     @GetMapping("/admin/filter")
     public String filter(@RequestParam(value="type") String type, Model model)
     {
@@ -66,6 +98,14 @@ public class AdminController {
         return adminService.manage(model, type);
     }
 
+    /**
+     * Mapping for GET
+     *
+     * Serves page to export current game data as JSON string
+     *
+     * @param model Model
+     * @return export data page
+     */
     @GetMapping("/admin/export")
     public String exportData(Model model)
     {
@@ -78,6 +118,15 @@ public class AdminController {
         return adminService.exportData(model);
     }
 
+    /**
+     * Mapping for GET
+     *
+     * Serves page to import new game data from JSON string
+     *
+     * @param model Model
+     * @param gameDao object to hold game data
+     * @return import data page
+     */
     @GetMapping("/admin/import")
     public String importData(GameDao gameDao, Model model)
     {
@@ -90,6 +139,15 @@ public class AdminController {
         return "admin/import";
     }
 
+    /**
+     * Mapping for POST
+     *
+     * Attempts to import new game data from JSON string
+     *
+     * @param model Model
+     * @param gameDao object to hold game data
+     * @return landing page, with error notification if unsuccessful
+     */
     @PostMapping("/admin/import/perform")
     public String importDataPerform(@Valid GameDao gameDao, Model model)
     {
@@ -102,6 +160,15 @@ public class AdminController {
         return adminService.importData(model, gameDao);
     }
 
+    /**
+     * Mapping for GET
+     *
+     * Serves page to add new game element
+     *
+     * @param model Model
+     * @param room object to hold game data
+     * @return add element form page
+     */
     @GetMapping("/admin/addRoom")
     public String addRoom(Model model, Room room)
     {
@@ -114,6 +181,16 @@ public class AdminController {
         return adminService.addRoom(model, room);
     }
 
+    /**
+     * Mapping for POST
+     *
+     * Attempts to add new game element from form provided data
+     *
+     * @param model Model
+     * @param room object to hold game data
+     * @param result validity check result
+     * @return manage data page if successful, add element page if error found
+     */
     @PostMapping("/admin/addRoom/validate")
     public String addRoomValidate(Model model, @Valid Room room, BindingResult result)
     {
@@ -126,6 +203,15 @@ public class AdminController {
         return adminService.validateRoom(model, result, room);
     }
 
+    /**
+     * Mapping for GET
+     *
+     * Attempts to delete an element from the game data
+     *
+     * @param model Model
+     * @param id element to be removed
+     * @return manage data page
+     */
     @GetMapping("/admin/deleteRoom/{id}")
     public String deleteRoom(@PathVariable("id") Integer id, Model model) {
         logger.info("User connected to admin/deleteRoom endpoint for room with id " + id);
@@ -137,6 +223,15 @@ public class AdminController {
         return adminService.deleteRoom(id, model);
     }
 
+    /**
+     * Mapping for GET
+     *
+     * Serves page to update existing game element
+     *
+     * @param model Model
+     * @param id element to be updated
+     * @return update element form page
+     */
     @GetMapping("/admin/updateRoom/{id}")
     public String updateRoom(@PathVariable("id") Integer id, Model model)
     {
@@ -149,6 +244,17 @@ public class AdminController {
         return adminService.updateRoom(id, model);
     }
 
+    /**
+     * Mapping for POST
+     *
+     * Attempts to update game element from form provided data
+     *
+     * @param model Model
+     * @param id element to be update
+     * @param room object to hold game data
+     * @param result validity check result
+     * @return manage data page if successful, update element page if error found
+     */
     @PostMapping("/admin/updateRoom/{id}")
     public String updateRoom(@PathVariable("id") Integer id, Model model,
                              @Valid Room room, BindingResult result)
@@ -162,6 +268,15 @@ public class AdminController {
         return adminService.updateRoom(id, room, result, model);
     }
 
+    /**
+     * Mapping for GET
+     *
+     * Serves page to add new game element
+     *
+     * @param model Model
+     * @param loot object to hold game data
+     * @return add element form page
+     */
     @GetMapping("/admin/addLoot")
     public String addLoot(Model model, Loot loot)
     {
@@ -174,6 +289,16 @@ public class AdminController {
         return adminService.addLoot(model, loot);
     }
 
+    /**
+     * Mapping for POST
+     *
+     * Attempts to add new game element from form provided data
+     *
+     * @param model Model
+     * @param loot object to hold game data
+     * @param result validity check result
+     * @return manage data page if successful, add element page if error found
+     */
     @PostMapping("/admin/addLoot/validate")
     public String addLootValidate(Model model, @Valid Loot loot, BindingResult result)
     {
@@ -186,6 +311,15 @@ public class AdminController {
         return adminService.validateLoot(model, result, loot);
     }
 
+    /**
+     * Mapping for GET
+     *
+     * Attempts to delete an element from the game data
+     *
+     * @param model Model
+     * @param id element to be removed
+     * @return manage data page
+     */
     @GetMapping("/admin/deleteLoot/{id}")
     public String deleteLoot(@PathVariable("id") Integer id, Model model) {
         logger.info("User connected to admin/deleteLoot endpoint for loot with id " + id);
@@ -197,6 +331,15 @@ public class AdminController {
         return adminService.deleteLoot(id, model);
     }
 
+    /**
+     * Mapping for GET
+     *
+     * Serves page to update existing game element
+     *
+     * @param model Model
+     * @param id element to be updated
+     * @return update element form page
+     */
     @GetMapping("/admin/updateLoot/{id}")
     public String updateLoot(@PathVariable("id") Integer id, Model model)
     {
@@ -209,6 +352,17 @@ public class AdminController {
         return adminService.updateLoot(id, model);
     }
 
+    /**
+     * Mapping for POST
+     *
+     * Attempts to update game element from form provided data
+     *
+     * @param model Model
+     * @param id element to be update
+     * @param loot object to hold game data
+     * @param result validity check result
+     * @return manage data page if successful, update element page if error found
+     */
     @PostMapping("/admin/updateLoot/{id}")
     public String updateRoom(@PathVariable("id") Integer id, Model model,
                              @Valid Loot loot, BindingResult result)
@@ -222,6 +376,15 @@ public class AdminController {
         return adminService.updateLoot(id, loot, result, model);
     }
 
+    /**
+     * Mapping for GET
+     *
+     * Serves page to add new game element
+     *
+     * @param model Model
+     * @param interactable object to hold game data
+     * @return add element form page
+     */
     @GetMapping("/admin/addInter")
     public String addInter(Model model, Interactable interactable)
     {
@@ -234,6 +397,16 @@ public class AdminController {
         return adminService.addInter(model, interactable);
     }
 
+    /**
+     * Mapping for POST
+     *
+     * Attempts to add new game element from form provided data
+     *
+     * @param model Model
+     * @param interactable object to hold game data
+     * @param result validity check result
+     * @return manage data page if successful, add element page if error found
+     */
     @PostMapping("/admin/addInter/validate")
     public String addInterValidate(Model model, @Valid Interactable interactable, BindingResult result)
     {
@@ -246,6 +419,15 @@ public class AdminController {
         return adminService.validateInter(model, result, interactable);
     }
 
+    /**
+     * Mapping for GET
+     *
+     * Attempts to delete an element from the game data
+     *
+     * @param model Model
+     * @param id element to be removed
+     * @return manage data page
+     */
     @GetMapping("/admin/deleteInter/{id}")
     public String deleteInter(@PathVariable("id") Integer id, Model model) {
         logger.info("User connected to admin/deleteInter endpoint for interactable with id " + id);
@@ -257,6 +439,15 @@ public class AdminController {
         return adminService.deleteInter(id, model);
     }
 
+    /**
+     * Mapping for GET
+     *
+     * Serves page to update existing game element
+     *
+     * @param model Model
+     * @param id element to be updated
+     * @return update element form page
+     */
     @GetMapping("/admin/updateInter/{id}")
     public String updateInter(@PathVariable("id") Integer id, Model model)
     {
@@ -269,6 +460,17 @@ public class AdminController {
         return adminService.updateInter(id, model);
     }
 
+    /**
+     * Mapping for POST
+     *
+     * Attempts to update game element from form provided data
+     *
+     * @param model Model
+     * @param id element to be update
+     * @param interactable object to hold game data
+     * @param result validity check result
+     * @return manage data page if successful, update element page if error found
+     */
     @PostMapping("/admin/updateInter/{id}")
     public String updateInter(@PathVariable("id") Integer id, Model model,
                              @Valid Interactable interactable, BindingResult result)
@@ -282,6 +484,15 @@ public class AdminController {
         return adminService.updateInter(id, interactable, result, model);
     }
 
+    /**
+     * Mapping for GET
+     *
+     * Serves page to add new game element
+     *
+     * @param model Model
+     * @param exitMapping object to hold game data
+     * @return add element form page
+     */
     @GetMapping("/admin/addExit")
     public String addExit(Model model, ExitMapping exitMapping)
     {
@@ -294,6 +505,16 @@ public class AdminController {
         return adminService.addExit(model, exitMapping);
     }
 
+    /**
+     * Mapping for POST
+     *
+     * Attempts to add new game element from form provided data
+     *
+     * @param model Model
+     * @param exitMapping object to hold game data
+     * @param result validity check result
+     * @return manage data page if successful, add element page if error found
+     */
     @PostMapping("/admin/addExit/validate")
     public String addExitValidate(Model model, @Valid ExitMapping exitMapping, BindingResult result)
     {
@@ -306,6 +527,15 @@ public class AdminController {
         return adminService.validateExit(model, result, exitMapping);
     }
 
+    /**
+     * Mapping for GET
+     *
+     * Attempts to delete an element from the game data
+     *
+     * @param model Model
+     * @param id element to be removed
+     * @return manage data page
+     */
     @GetMapping("/admin/deleteExit/{id}")
     public String deleteExit(@PathVariable("id") Integer id, Model model) {
         logger.info("User connected to admin/deleteExit endpoint for exit with id " + id);
@@ -317,6 +547,15 @@ public class AdminController {
         return adminService.deleteExit(id, model);
     }
 
+    /**
+     * Mapping for GET
+     *
+     * Serves page to update existing game element
+     *
+     * @param model Model
+     * @param id element to be updated
+     * @return update element form page
+     */
     @GetMapping("/admin/updateExit/{id}")
     public String updateExit(@PathVariable("id") Integer id, Model model)
     {
@@ -329,6 +568,17 @@ public class AdminController {
         return adminService.updateExit(id, model);
     }
 
+    /**
+     * Mapping for POST
+     *
+     * Attempts to update game element from form provided data
+     *
+     * @param model Model
+     * @param id element to be update
+     * @param exitMapping object to hold game data
+     * @param result validity check result
+     * @return manage data page if successful, update element page if error found
+     */
     @PostMapping("/admin/updateExit/{id}")
     public String updateExit(@PathVariable("id") Integer id, Model model,
                              @Valid ExitMapping exitMapping, BindingResult result)
@@ -342,6 +592,15 @@ public class AdminController {
         return adminService.updateExit(id, exitMapping, result, model);
     }
 
+    /**
+     * Mapping for GET
+     *
+     * Serves page to add new game element
+     *
+     * @param model Model
+     * @param ending object to hold game data
+     * @return add element form page
+     */
     @GetMapping("/admin/addEnding")
     public String addEnding(Model model, Ending ending)
     {
@@ -354,6 +613,16 @@ public class AdminController {
         return adminService.addEnding(model, ending);
     }
 
+    /**
+     * Mapping for POST
+     *
+     * Attempts to add new game element from form provided data
+     *
+     * @param model Model
+     * @param ending object to hold game data
+     * @param result validity check result
+     * @return manage data page if successful, add element page if error found
+     */
     @PostMapping("/admin/addEnding/validate")
     public String addEndingValidate(Model model, @Valid Ending ending, BindingResult result)
     {
@@ -366,6 +635,15 @@ public class AdminController {
         return adminService.validateEnding(model, result, ending);
     }
 
+    /**
+     * Mapping for GET
+     *
+     * Attempts to delete an element from the game data
+     *
+     * @param model Model
+     * @param id element to be removed
+     * @return manage data page
+     */
     @GetMapping("/admin/deleteEnding/{id}")
     public String deleteEnding(@PathVariable("id") Integer id, Model model) {
         logger.info("User connected to admin/deleteEnding endpoint for ending with id " + id);
@@ -377,6 +655,15 @@ public class AdminController {
         return adminService.deleteEnding(id, model);
     }
 
+    /**
+     * Mapping for GET
+     *
+     * Serves page to update existing game element
+     *
+     * @param model Model
+     * @param id element to be updated
+     * @return update element form page
+     */
     @GetMapping("/admin/updateEnding/{id}")
     public String updateEnding(@PathVariable("id") Integer id, Model model)
     {
@@ -389,6 +676,17 @@ public class AdminController {
         return adminService.updateEnding(id, model);
     }
 
+    /**
+     * Mapping for POST
+     *
+     * Attempts to update game element from form provided data
+     *
+     * @param model Model
+     * @param id element to be update
+     * @param ending object to hold game data
+     * @param result validity check result
+     * @return manage data page if successful, update element page if error found
+     */
     @PostMapping("/admin/updateEnding/{id}")
     public String updateEnding(@PathVariable("id") Integer id, Model model,
                              @Valid Ending ending, BindingResult result)
@@ -402,6 +700,15 @@ public class AdminController {
         return adminService.updateEnding(id, ending, result, model);
     }
 
+    /**
+     * Mapping for GET
+     *
+     * Serves page to add new game element
+     *
+     * @param model Model
+     * @param npc object to hold game data
+     * @return add element form page
+     */
     @GetMapping("/admin/addNpc")
     public String addNpc(Model model, Npc npc)
     {
@@ -414,6 +721,16 @@ public class AdminController {
         return adminService.addNpc(model, npc);
     }
 
+    /**
+     * Mapping for POST
+     *
+     * Attempts to add new game element from form provided data
+     *
+     * @param model Model
+     * @param npc object to hold game data
+     * @param result validity check result
+     * @return manage data page if successful, add element page if error found
+     */
     @PostMapping("/admin/addNpc/validate")
     public String addEndingNpc(Model model, @Valid Npc npc, BindingResult result)
     {
@@ -426,6 +743,15 @@ public class AdminController {
         return adminService.validateNpc(model, result, npc);
     }
 
+    /**
+     * Mapping for GET
+     *
+     * Attempts to delete an element from the game data
+     *
+     * @param model Model
+     * @param id element to be removed
+     * @return manage data page
+     */
     @GetMapping("/admin/deleteNpc/{id}")
     public String deleteNpc(@PathVariable("id") Integer id, Model model) {
         logger.info("User connected to admin/deleteNpc endpoint for npc with id " + id);
@@ -437,6 +763,15 @@ public class AdminController {
         return adminService.deleteNpc(id, model);
     }
 
+    /**
+     * Mapping for GET
+     *
+     * Serves page to update existing game element
+     *
+     * @param model Model
+     * @param id element to be updated
+     * @return update element form page
+     */
     @GetMapping("/admin/updateNpc/{id}")
     public String updateNpc(@PathVariable("id") Integer id, Model model)
     {
@@ -449,6 +784,17 @@ public class AdminController {
         return adminService.updateNpc(id, model);
     }
 
+    /**
+     * Mapping for POST
+     *
+     * Attempts to update game element from form provided data
+     *
+     * @param model Model
+     * @param id element to be update
+     * @param npc object to hold game data
+     * @param result validity check result
+     * @return manage data page if successful, update element page if error found
+     */
     @PostMapping("/admin/updateNpc/{id}")
     public String updateNpc(@PathVariable("id") Integer id, Model model,
                                @Valid Npc npc, BindingResult result)
