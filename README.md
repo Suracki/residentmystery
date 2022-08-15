@@ -115,27 +115,27 @@ Example game management screen. Lists objects currently in game data, can be fil
 ## Game Elements
 
 The following game elements are present:<br><br>
-Rooms<br>
+<h4>Room</h4><br>
 Rooms are the areas that the player will explore. They can contain other objects.<br>
 They are connected together via ExitMappings<br><br>
-ExitMapping<br>
+<h4>ExitMapping</h4><br>
 ExitMappings are what is used to allow navigation. They contain a room name, an exit (interactable) name, and a direction.
-Interactable<br>
+<h4>Interactable</h4><br>
 Interactables are any stationary object in a room that can be interacted with.<br>
 They can be locked, requiring a key item to be provided.<br>
 Upon unlocking they can provide another item in return, unlock another interactable, or end the game.<br>
 Interactables can be used as exits in ExitMappings, and this also allows exits to be locked.<br>
 Locked exits can be unlocked either by key item, or by being unlocked via another Interactable being solved.<br><br>
-Loot<br>
+<h4>Loot</h4><br>
 Loots are objects which can be picked up by the player.<br>
 They can be placed in rooms and directly looted, or can be rewarded from unlocking Interactables or NPCs.<br>
 They can be used as Keys for Interactables or NPCs.<br><br>
-NPC<br>
+<h4>NPC</h4><br>
 NPCs are objects representing non player characters.<br>
 They are placed in a room to start, but can be set to wander. If they are allowed to wander, they will move randomly through any unlocked ExitMappings.<br>
 NPCs can be 'locked', allowing quests to be implemented.<br>
 Upon unlocking/completing, they can provide a Loot reward, or can end the game.<br>
-Ending<br>
+<h4>Ending</h4><br>
 Endings are used to store the text for ending the game.<br>
 There can be multiple endings, and different Interactables/NPCs can point to different endings.<br>
 
