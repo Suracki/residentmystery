@@ -102,13 +102,13 @@ The application serves a Front End UI using Thymeleaf and Bootstrap, which can b
 /game/start -> Game landing/start page<br>
 
 <img src="readme/homepage.png" alt="homepage">
-The game's home page. Allowing users to start/login, register a new user, or request a password reset<br>
+The game's home page. Allowing users to start/login, register a new user, or request a password reset<br><br>
 
 <img src="readme/gameplay.png" alt="gameplay">
-Example gameplay screen; exploring a room. The room's description and contents are visible, items and other interactions are displayed as links<br>
+Example gameplay screen; exploring a room. The room's description and contents are visible, items and other interactions are displayed as links<br><br>
 
 <img src="readme/management.png" alt="management">
-Example game management screen. Lists objects currently in game data, can be filtered by object type/<br>
+Example game management screen. Lists objects currently in game data, can be filtered by object type/<br><br>
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
